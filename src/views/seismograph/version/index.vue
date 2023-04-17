@@ -116,7 +116,7 @@
           <el-input v-model="form.no" placeholder="请输入版本号" />
         </el-form-item>
         <el-form-item label="版本日志" prop="log">
-          <el-input v-model="form.log" placeholder="请输入版本日志" />
+          <el-input v-model="form.log" type="textarea" placeholder="请输入内容" />
         </el-form-item>
         <el-form-item label="下载地址" prop="uri">
           <el-input v-model="form.uri" placeholder="请输入下载地址" />
