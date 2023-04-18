@@ -3,52 +3,52 @@
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="设备编号" prop="equipmentIdentity">
         <el-input
-          v-model="queryParams.equipmentIdentity"
-          placeholder="请输入设备编号"
-          clearable
-          @keyup.enter="handleQuery"
+            v-model="queryParams.equipmentIdentity"
+            placeholder="请输入设备编号"
+            clearable
+            @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="企业id" prop="enterpriseId">
         <el-select v-model="queryParams.enterpriseId" placeholder="请选择企业id" clearable>
           <el-option
-            v-for="dict in document_type"
-            :key="dict.value"
-            :label="dict.label"
-            :value="dict.value"
+              v-for="dict in document_type"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
           />
         </el-select>
       </el-form-item>
       <el-form-item label="站点号" prop="siteNo">
         <el-input
-          v-model="queryParams.siteNo"
-          placeholder="请输入站点号"
-          clearable
-          @keyup.enter="handleQuery"
+            v-model="queryParams.siteNo"
+            placeholder="请输入站点号"
+            clearable
+            @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="站点名" prop="siteName">
         <el-input
-          v-model="queryParams.siteName"
-          placeholder="请输入站点名"
-          clearable
-          @keyup.enter="handleQuery"
+            v-model="queryParams.siteName"
+            placeholder="请输入站点名"
+            clearable
+            @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="布设人" prop="deployer">
         <el-input
-          v-model="queryParams.deployer"
-          placeholder="请输入布设人"
-          clearable
-          @keyup.enter="handleQuery"
+            v-model="queryParams.deployer"
+            placeholder="请输入布设人"
+            clearable
+            @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item label="站点地址" prop="siteLoc">
         <el-input
-          v-model="queryParams.siteLoc"
-          placeholder="请输入站点地址"
-          clearable
-          @keyup.enter="handleQuery"
+            v-model="queryParams.siteLoc"
+            placeholder="请输入站点地址"
+            clearable
+            @keyup.enter="handleQuery"
         />
       </el-form-item>
       <el-form-item>
@@ -60,132 +60,141 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
-          plain
-          icon="Plus"
-          @click="handleAdd"
-          v-hasPermi="['seismograph:equipment:add']"
-        >新增</el-button>
+            type="primary"
+            plain
+            icon="Plus"
+            @click="handleAdd"
+            v-hasPermi="['seismograph:equipment:add']"
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['seismograph:equipment:edit']"
-        >修改</el-button>
+            type="success"
+            plain
+            icon="Edit"
+            :disabled="single"
+            @click="handleUpdate"
+            v-hasPermi="['seismograph:equipment:edit']"
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="danger"
-          plain
-          icon="Delete"
-          :disabled="multiple"
-          @click="handleDelete"
-          v-hasPermi="['seismograph:equipment:remove']"
-        >删除</el-button>
+            type="danger"
+            plain
+            icon="Delete"
+            :disabled="multiple"
+            @click="handleDelete"
+            v-hasPermi="['seismograph:equipment:remove']"
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
-          plain
-          icon="Download"
-          @click="handleExport"
-          v-hasPermi="['seismograph:equipment:export']"
-        >导出</el-button>
+            type="warning"
+            plain
+            icon="Download"
+            @click="handleExport"
+            v-hasPermi="['seismograph:equipment:export']"
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="equipmentList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="equipmentId" />
-      <el-table-column label="设备编号" align="center" prop="equipmentIdentity" />
+      <el-table-column type="selection" width="55" align="center"/>
+<!--      <el-table-column label="ID" align="center" prop="equipmentId" max-width="100"/>-->
+      <el-table-column label="设备编号" align="center" prop="equipmentIdentity" min-width="120"/>
       <el-table-column label="企业id" align="center" prop="enterpriseId">
         <template #default="scope">
           <dict-tag :options="document_type" :value="scope.row.enterpriseId"/>
         </template>
       </el-table-column>
       <el-table-column label="第一次使用" align="center" prop="firstUseTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.firstUseTime, '{y}-{m}-{d}') }}</span>
-        </template>
       </el-table-column>
-      <el-table-column label="使用时长" align="center" prop="accumulativeUseTime" />
-      <el-table-column label="站点号" align="center" prop="siteNo" />
-      <el-table-column label="站点名" align="center" prop="siteName" />
-      <el-table-column label="布设人" align="center" prop="deployer" />
-      <el-table-column label="站点地址" align="center" prop="siteLoc" />
-      <el-table-column label="经度" align="center" prop="siteLocLon" />
-      <el-table-column label="纬度" align="center" prop="siteLocLat" />
+      <el-table-column label="使用时长" align="center" prop="accumulativeUseTime"/>
+      <el-table-column label="站点号" align="center" prop="siteNo"/>
+      <el-table-column label="站点名" align="center" prop="siteName"/>
+      <el-table-column label="布设人" align="center" prop="deployer"/>
+      <el-table-column label="站点地址" align="center" prop="siteLoc" min-width="300" :show-overflow-tooltip="true"/>
+      <el-table-column label="经度" align="center" prop="siteLocLon" min-width="120" :show-overflow-tooltip="true"/>
+      <el-table-column label="纬度" align="center" prop="siteLocLat" min-width="120" :show-overflow-tooltip="true"/>
       <el-table-column label="站点图片" align="center" prop="siteImageUri" width="100">
         <template #default="scope">
           <image-preview :src="scope.row.siteImageUri" :width="50" :height="50"/>
         </template>
       </el-table-column>
-      <el-table-column label="站点视频" align="center" prop="siteVideoUri" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="站点视频" align="center" prop="siteVideoUri">
         <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['seismograph:equipment:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['seismograph:equipment:remove']">删除</el-button>
+          <span>{{ scope.row.siteVideoUri }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="160">
+        <template #default="scope">
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
+                     v-hasPermi="['seismograph:equipment:edit']">修改
+          </el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
+                     v-hasPermi="['seismograph:equipment:remove']">删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
-      v-show="total>0"
-      :total="total"
-      v-model:page="queryParams.pageNum"
-      v-model:limit="queryParams.pageSize"
-      @pagination="getList"
+        v-show="total>0"
+        :total="total"
+        v-model:page="queryParams.pageNum"
+        v-model:limit="queryParams.pageSize"
+        @pagination="getList"
     />
 
     <!-- 添加或修改设备对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="equipmentRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="设备编号" prop="equipmentIdentity">
-          <el-input v-model="form.equipmentIdentity" placeholder="请输入设备编号" />
+          <el-input v-model="form.equipmentIdentity" placeholder="请输入设备编号"/>
         </el-form-item>
         <el-form-item label="企业id" prop="enterpriseId">
           <el-select v-model="form.enterpriseId" placeholder="请选择企业id">
             <el-option
-              v-for="dict in document_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="parseInt(dict.value)"
+                v-for="dict in document_type"
+                :key="dict.value"
+                :label="dict.label"
+                :value="parseInt(dict.value)"
             ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="第一次使用" prop="firstUseTime">
           <el-date-picker clearable
-            v-model="form.firstUseTime"
-            type="date"
-            value-format="YYYY-MM-DD"
-            placeholder="请选择第一次使用">
+                          v-model="form.firstUseTime"
+                          type="date"
+                          value-format="YYYY-MM-DD"
+                          placeholder="请选择第一次使用">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="使用时长" prop="accumulativeUseTime">
-          <el-input v-model="form.accumulativeUseTime" placeholder="请输入使用时长" />
+          <el-input v-model="form.accumulativeUseTime" placeholder="请输入使用时长"/>
         </el-form-item>
         <el-form-item label="站点号" prop="siteNo">
-          <el-input v-model="form.siteNo" placeholder="请输入站点号" />
+          <el-input v-model="form.siteNo" placeholder="请输入站点号"/>
         </el-form-item>
         <el-form-item label="站点名" prop="siteName">
-          <el-input v-model="form.siteName" placeholder="请输入站点名" />
+          <el-input v-model="form.siteName" placeholder="请输入站点名"/>
         </el-form-item>
         <el-form-item label="布设人" prop="deployer">
-          <el-input v-model="form.deployer" placeholder="请输入布设人" />
+          <el-input v-model="form.deployer" placeholder="请输入布设人"/>
         </el-form-item>
         <el-form-item label="站点地址" prop="siteLoc">
-          <el-input v-model="form.siteLoc" placeholder="请输入站点地址" />
+          <el-input v-model="form.siteLoc" placeholder="请输入站点地址"/>
         </el-form-item>
         <el-form-item label="经度" prop="siteLocLon">
-          <el-input v-model="form.siteLocLon" placeholder="请输入经度" />
+          <el-input v-model="form.siteLocLon" placeholder="请输入经度"/>
         </el-form-item>
         <el-form-item label="纬度" prop="siteLocLat">
-          <el-input v-model="form.siteLocLat" placeholder="请输入纬度" />
+          <el-input v-model="form.siteLocLat" placeholder="请输入纬度"/>
         </el-form-item>
         <el-form-item label="站点图片" prop="siteImageUri">
           <image-upload v-model="form.siteImageUri"/>
@@ -194,7 +203,7 @@
           <file-upload v-model="form.siteVideoUri"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
+          <el-input v-model="form.remark" placeholder="请输入备注"/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -208,10 +217,10 @@
 </template>
 
 <script setup name="Equipment">
-import { listEquipment, getEquipment, delEquipment, addEquipment, updateEquipment } from "@/api/seismograph/equipment";
+import {addEquipment, delEquipment, getEquipment, listEquipment, updateEquipment} from "@/api/seismograph/equipment";
 
-const { proxy } = getCurrentInstance();
-const { document_type } = proxy.useDict('document_type');
+const {proxy} = getCurrentInstance();
+const {document_type} = proxy.useDict('document_type');
 
 const equipmentList = ref([]);
 const open = ref(false);
@@ -237,12 +246,12 @@ const data = reactive({
   },
   rules: {
     equipmentIdentity: [
-      { required: true, message: "设备编号不能为空", trigger: "blur" }
+      {required: true, message: "设备编号不能为空", trigger: "blur"}
     ],
   }
 });
 
-const { queryParams, form, rules } = toRefs(data);
+const {queryParams, form, rules} = toRefs(data);
 
 /** 查询设备列表 */
 function getList() {
@@ -344,12 +353,13 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _equipmentIds = row.equipmentId || ids.value;
-  proxy.$modal.confirm('是否确认删除设备编号为"' + _equipmentIds + '"的数据项？').then(function() {
+  proxy.$modal.confirm('是否确认删除设备编号为"' + _equipmentIds + '"的数据项？').then(function () {
     return delEquipment(_equipmentIds);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
-  }).catch(() => {});
+  }).catch(() => {
+  });
 }
 
 /** 导出按钮操作 */

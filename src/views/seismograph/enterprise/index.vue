@@ -79,25 +79,25 @@
 
     <el-table v-loading="loading" :data="enterpriseList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="enterpriseId" />
-      <el-table-column label="企业名称" align="center" prop="name" />
-      <el-table-column label="通讯地址" align="center" prop="mailingAddress" />
+      <el-table-column label="ID" align="center" prop="enterpriseId" width="80"/>
+      <el-table-column label="企业名称" align="center" prop="name" :show-overflow-tooltip="true"/>
+      <el-table-column label="通讯地址" align="center" prop="mailingAddress" :show-overflow-tooltip="true"/>
       <el-table-column label="社会信用代码" align="center" prop="uniformSocialCreditCode" />
-      <el-table-column label="联系人" align="center" prop="contactPerson" />
-      <el-table-column label="联系方式" align="center" prop="contactWay" />
-      <el-table-column label="企业等级" align="center" prop="enterpriseLevel">
+      <el-table-column label="联系人" align="center" prop="contactPerson" width="100"/>
+      <el-table-column label="联系方式" align="center" prop="contactWay" width="120"/>
+      <el-table-column label="企业等级" align="center" prop="enterpriseLevel" width="80">
         <template #default="scope">
           <dict-tag :options="enterprise_level" :value="scope.row.enterpriseLevel"/>
         </template>
       </el-table-column>
-      <el-table-column label="用户数" align="center" prop="numberOfUsers" />
-      <el-table-column label="空间大小" align="center" prop="useDiskSize" />
-      <el-table-column label="状态" align="center" prop="status">
+      <el-table-column label="用户数" align="center" prop="numberOfUsers" width="80"/>
+      <el-table-column label="空间大小" align="center" prop="useDiskSize" width="80"/>
+      <el-table-column label="状态" align="center" prop="status" width="80">
         <template #default="scope">
           <dict-tag :options="sys_normal_disable" :value="scope.row.status"/>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="160" fixed="right">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['seismograph:enterprise:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['seismograph:enterprise:remove']">删除</el-button>

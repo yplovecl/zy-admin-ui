@@ -1,18 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="设备系列" prop="equipmentSeries">
+      <el-form-item v-if="type == 2" label="设备ID" prop="equipmentIdentity">
         <el-input
-            v-model="queryParams.equipmentSeries"
-            placeholder="请输入设备系列"
+            v-model="queryParams.equipmentIdentity"
+            placeholder="请输入设备ID"
             clearable
             @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="设备ID" prop="equipmentIdentity">
+      <el-form-item v-else label="设备系列" prop="equipmentSeries">
         <el-input
-            v-model="queryParams.equipmentIdentity"
-            placeholder="请输入设备ID"
+            v-model="queryParams.equipmentSeries"
+            placeholder="请输入设备系列"
             clearable
             @keyup.enter="handleQuery"
         />
@@ -71,26 +71,13 @@
 
     <el-table v-loading="loading" :data="documentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-      <el-table-column label="ID" align="center" prop="documentMgtId"/>
-      <el-table-column label="类型" align="center" prop="type">
-        <template #default="scope">
-          <dict-tag :options="document_type" :value="scope.row.type"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="设备系列" align="center" prop="equipmentSeries"/>
-      <el-table-column label="设备ID" align="center" prop="equipmentIdentity"/>
+      <el-table-column label="ID" align="center" prop="documentMgtId" width="80"/>
+      <el-table-column v-if="type == 2" label="设备ID" align="center" prop="equipmentIdentity"/>
+      <el-table-column v-else label="设备系列" align="center" prop="equipmentSeries"/>
       <el-table-column label="文档" align="center" prop="documentName"/>
-      <el-table-column label="创建时间" align="center" prop="createTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="修改时间" align="center" prop="updateTime" width="180">
-        <template #default="scope">
-          <span>{{ parseTime(scope.row.updateTime, '{y}-{m}-{d}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180"/>
+      <el-table-column label="修改时间" align="center" prop="updateTime" width="180"/>
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="180">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                      v-hasPermi="['seismograph:document:edit']">修改
@@ -113,26 +100,19 @@
     <!-- 添加或修改文档管理对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="documentRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="类型" prop="type">
-          <el-select v-model="form.type" placeholder="请选择类型">
-            <el-option
-                v-for="dict in document_type"
-                :key="dict.value"
-                :label="dict.label"
-                :value="dict.value"
-            ></el-option>
-          </el-select>
+        <el-form-item v-show="false" label="类型" prop="type">
+          <el-input v-model="form.type" placeholder="请输入类型"/>
         </el-form-item>
-        <el-form-item label="设备系列" prop="equipmentSeries">
-          <el-input v-model="form.equipmentSeries" placeholder="请输入设备系列"/>
+        <el-form-item label="系列名称" prop="equipmentSeries">
+          <el-input v-model="form.equipmentSeries" placeholder="请输入系列名称"/>
         </el-form-item>
         <el-form-item label="设备ID" prop="equipmentIdentity">
           <el-input v-model="form.equipmentIdentity" placeholder="请输入设备ID"/>
         </el-form-item>
-        <el-form-item label="文档" prop="documentName">
-          <el-input v-model="form.documentName" type="textarea" placeholder="请输入内容"/>
+        <el-form-item label="文档名称" prop="documentName">
+          <el-input v-model="form.documentName" placeholder="请输入文档名称"/>
         </el-form-item>
-        <el-form-item label="文档URL" prop="documentUri">
+        <el-form-item label="文档" prop="documentUri">
           <file-upload v-model="form.documentUri"/>
         </el-form-item>
       </el-form>
@@ -151,13 +131,17 @@ import {reactive, ref} from "vue";
 import {useRoute} from "vue-router"
 import {addDocument, delDocument, getDocument, listDocument, updateDocument} from "@/api/seismograph/document";
 
-const routeName = useRoute().name
-let type = {
+const type = {
   'Document': 1,
-  'Report': 1,
-  'Software': 1,
-}[routeName] || 1
-console.log(routeName, type)
+  'Report': 2,
+  'Software': 3,
+}[useRoute().name] || 1;
+
+const typeName = {
+  1: '操作手册',
+  2: '质检报告',
+  3: '更新设备',
+}[type];
 
 const {proxy} = getCurrentInstance();
 const {document_type} = proxy.useDict('document_type');
@@ -216,7 +200,7 @@ function cancel() {
 function reset() {
   form.value = {
     documentMgtId: null,
-    type: null,
+    type: type.toString(),
     equipmentSeries: null,
     equipmentIdentity: null,
     documentName: null,
@@ -250,7 +234,7 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   open.value = true;
-  title.value = "添加文档管理";
+  title.value = `添加${typeName}`;
 }
 
 /** 修改按钮操作 */
@@ -260,7 +244,7 @@ function handleUpdate(row) {
   getDocument(_documentMgtId).then(response => {
     form.value = response.data;
     open.value = true;
-    title.value = "修改文档管理";
+    title.value = `修改${typeName}`;
   });
 }
 

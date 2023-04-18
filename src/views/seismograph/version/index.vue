@@ -79,21 +79,23 @@
 
     <el-table v-loading="loading" :data="versionList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="versionId" />
-      <el-table-column label="版本号" align="center" prop="no" />
+      <el-table-column label="ID" align="center" prop="versionId" width="80"/>
+      <el-table-column label="版本号" align="center" prop="no" width="100"/>
       <el-table-column label="版本日志" align="center" prop="log" />
       <el-table-column label="下载地址" align="center" prop="uri" />
-      <el-table-column label="类别" align="center" prop="type">
+      <el-table-column label="类别" align="center" prop="type" width="80">
         <template #default="scope">
           <dict-tag :options="app_system" :value="scope.row.type"/>
         </template>
       </el-table-column>
-      <el-table-column label="强制更新" align="center" prop="enforce">
+      <el-table-column label="强制更新" align="center" prop="enforce" width="80">
         <template #default="scope">
           <dict-tag :options="sys_yes_no" :value="scope.row.enforce"/>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180"/>
+      <el-table-column label="修改时间" align="center" prop="updateTime" width="180"/>
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="180">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['seismograph:version:edit']">修改</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['seismograph:version:remove']">删除</el-button>
