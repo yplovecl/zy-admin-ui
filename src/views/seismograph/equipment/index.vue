@@ -118,6 +118,11 @@
       <el-table-column label="站点号" align="center" prop="siteNo"/>
       <el-table-column label="站点名" align="center" prop="siteName"/>
       <el-table-column label="布设人" align="center" prop="deployer"/>
+      <el-table-column label="在线" align="center" prop="online" width="80">
+        <template #default="scope">
+          <dict-tag :options="sys_yes_no" :value="scope.row.online"/>
+        </template>
+      </el-table-column>
       <el-table-column label="站点地址" align="center" prop="siteLoc" min-width="300" :show-overflow-tooltip="true"/>
       <el-table-column label="经度" align="center" prop="siteLocLon" min-width="120" :show-overflow-tooltip="true"/>
       <el-table-column label="纬度" align="center" prop="siteLocLat" min-width="120" :show-overflow-tooltip="true"/>
@@ -220,7 +225,7 @@
 import {addEquipment, delEquipment, getEquipment, listEquipment, updateEquipment} from "@/api/seismograph/equipment";
 
 const {proxy} = getCurrentInstance();
-const {document_type} = proxy.useDict('document_type');
+const {document_type, sys_yes_no} = proxy.useDict('document_type', 'sys_yes_no');
 
 const equipmentList = ref([]);
 const open = ref(false);
