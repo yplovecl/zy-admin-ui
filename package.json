@@ -15,7 +15,9 @@
     "url": "https://gitee.com/y_project/RuoYi-Vue.git"
   },
   "dependencies": {
+    "@amap/screenshot": "^0.0.3",
     "@element-plus/icons-vue": "2.0.10",
+    "@vuemap/vue-amap": "^2.0.5",
     "@vueup/vue-quill": "1.1.0",
     "@vueuse/core": "9.5.0",
     "axios": "0.27.2",
