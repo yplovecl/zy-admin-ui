@@ -77,7 +77,7 @@
       <el-table-column label="文档" align="center" prop="documentName"/>
       <el-table-column label="创建时间" align="center" prop="createTime" width="180"/>
       <el-table-column label="修改时间" align="center" prop="updateTime" width="180"/>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="180">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="200">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                      v-hasPermi="['seismograph:document:edit']">修改
@@ -85,6 +85,10 @@
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['seismograph:document:remove']">删除
           </el-button>
+          <el-link v-hasPermi="['seismograph:document:download']" :href="`${scope.row.documentUri}`" :underline="false"
+                   target="_blank">
+            <el-button link type="primary" icon="Download">下载</el-button>
+          </el-link>
         </template>
       </el-table-column>
     </el-table>
