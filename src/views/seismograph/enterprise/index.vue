@@ -91,7 +91,11 @@
         </template>
       </el-table-column>
       <el-table-column label="用户数" align="center" prop="numberOfUsers" width="80"/>
-      <el-table-column label="空间大小" align="center" prop="useDiskSize" width="80"/>
+      <el-table-column label="空间大小" align="center" prop="useDiskSize" width="80">
+        <template #default="scope">
+         <span>{{scope.row.useDiskSize}}G</span>
+        </template>
+      </el-table-column>
       <el-table-column label="状态" align="center" prop="status" width="80">
         <template #default="scope">
           <dict-tag :options="sys_normal_disable" :value="scope.row.status"/>
@@ -115,7 +119,7 @@
 
     <!-- 添加或修改企业对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="enterpriseRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="enterpriseRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="企业名称" prop="name">
           <el-input v-model="form.name" placeholder="请输入企业名称" />
         </el-form-item>
@@ -145,10 +149,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="用户数" prop="numberOfUsers">
-          <el-input v-model="form.numberOfUsers" placeholder="请输入用户数" />
+          <el-input-number v-model="form.numberOfUsers" :min="1" :max="1000"/>
         </el-form-item>
         <el-form-item label="空间大小" prop="useDiskSize">
-          <el-input v-model="form.useDiskSize" placeholder="请输入空间大小" />
+<!--          <el-input v-model="form.useDiskSize" placeholder="请输入空间大小" />-->
+          <el-input-number v-model="form.useDiskSize" :min="1" :max="100"/>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
@@ -258,9 +263,9 @@ function reset() {
     contactPerson: null,
     contactWay: null,
     enterpriseLevel: null,
-    numberOfUsers: null,
-    useDiskSize: null,
-    status: null,
+    numberOfUsers: 1,
+    useDiskSize: 1,
+    status: '0',
     createTime: null,
     updateTime: null
   };

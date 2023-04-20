@@ -9,8 +9,8 @@
             @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="企业id" prop="enterpriseId">
-        <el-select v-model="queryParams.enterpriseId" placeholder="请选择企业id" clearable>
+      <el-form-item label="所属企业" prop="enterpriseId">
+        <el-select v-model="queryParams.enterpriseId" placeholder="请选择企业" clearable>
           <el-option
               v-for="dict in document_type"
               :key="dict.value"
@@ -105,9 +105,9 @@
 
     <el-table v-loading="loading" :data="equipmentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
-<!--      <el-table-column label="ID" align="center" prop="equipmentId" max-width="100"/>-->
+      <!--      <el-table-column label="ID" align="center" prop="equipmentId" max-width="100"/>-->
       <el-table-column label="设备编号" align="center" prop="equipmentIdentity" min-width="120"/>
-      <el-table-column label="企业id" align="center" prop="enterpriseId">
+      <el-table-column label="所属企业" align="center" prop="enterpriseId">
         <template #default="scope">
           <dict-tag :options="document_type" :value="scope.row.enterpriseId"/>
         </template>
@@ -115,27 +115,35 @@
       <el-table-column label="第一次使用" align="center" prop="firstUseTime" width="180">
       </el-table-column>
       <el-table-column label="使用时长" align="center" prop="accumulativeUseTime"/>
-      <el-table-column label="站点号" align="center" prop="siteNo"/>
-      <el-table-column label="站点名" align="center" prop="siteName"/>
+      <!--      <el-table-column label="站点号" align="center" prop="siteNo"/>-->
+      <!--      <el-table-column label="站点名" align="center" prop="siteName"/>-->
       <el-table-column label="布设人" align="center" prop="deployer"/>
       <el-table-column label="在线" align="center" prop="online" width="80">
         <template #default="scope">
           <dict-tag :options="sys_yes_no" :value="scope.row.online"/>
         </template>
       </el-table-column>
-      <el-table-column label="站点地址" align="center" prop="siteLoc" min-width="300" :show-overflow-tooltip="true"/>
-      <el-table-column label="经度" align="center" prop="siteLocLon" min-width="120" :show-overflow-tooltip="true"/>
-      <el-table-column label="纬度" align="center" prop="siteLocLat" min-width="120" :show-overflow-tooltip="true"/>
-      <el-table-column label="站点图片" align="center" prop="siteImageUri" width="100">
+      <!--      <el-table-column label="经度" align="center" prop="siteLocLon" min-width="120" :show-overflow-tooltip="true"/>-->
+      <!--      <el-table-column label="纬度" align="center" prop="siteLocLat" min-width="120" :show-overflow-tooltip="true"/>-->
+      <el-table-column label="站点地址" align="center" prop="siteLoc" min-width="300" :show-overflow-tooltip="true">
         <template #default="scope">
-          <image-preview :src="scope.row.siteImageUri" :width="50" :height="50"/>
+          <el-link v-if="scope.row.siteLocLon && scope.row.siteLocLat"
+                   :href="`https://uri.amap.com/marker?position=${scope.row.siteLocLon},${scope.row.siteLocLat}`"
+                   target="_blank">{{ scope.row.siteLoc || '--' }}
+          </el-link>
+          <span v-else>{{ scope.row.siteLoc || '--' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="站点视频" align="center" prop="siteVideoUri">
-        <template #default="scope">
-          <span>{{ scope.row.siteVideoUri }}</span>
-        </template>
-      </el-table-column>
+      <!--      <el-table-column label="站点图片" align="center" prop="siteImageUri" width="100">
+              <template #default="scope">
+                <image-preview :src="scope.row.siteImageUri" :width="50" :height="50"/>
+              </template>
+            </el-table-column>-->
+      <!--      <el-table-column label="站点视频" align="center" prop="siteVideoUri">
+              <template #default="scope">
+                <span>{{ scope.row.siteVideoUri }}</span>
+              </template>
+            </el-table-column>-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="160">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
@@ -158,12 +166,12 @@
 
     <!-- 添加或修改设备对话框 -->
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="equipmentRef" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="equipmentRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="设备编号" prop="equipmentIdentity">
           <el-input v-model="form.equipmentIdentity" placeholder="请输入设备编号"/>
         </el-form-item>
-        <el-form-item label="企业id" prop="enterpriseId">
-          <el-select v-model="form.enterpriseId" placeholder="请选择企业id">
+        <el-form-item label="所属企业" prop="enterpriseId">
+          <el-select v-model="form.enterpriseId" placeholder="请选择企业">
             <el-option
                 v-for="dict in document_type"
                 :key="dict.value"
