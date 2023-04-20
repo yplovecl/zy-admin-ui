@@ -11,12 +11,8 @@
       </el-form-item>
       <el-form-item label="所属企业" prop="enterpriseId">
         <el-select v-model="queryParams.enterpriseId" placeholder="请选择企业" clearable>
-          <el-option
-              v-for="dict in document_type"
-              :key="dict.value"
-              :label="dict.label"
-              :value="dict.value"
-          />
+          <el-option v-for="item in enterpriseList" :key="item.enterpriseId" :label="item.name"
+                     :value="item.enterpriseId"/>
         </el-select>
       </el-form-item>
       <el-form-item label="站点号" prop="siteNo">
@@ -106,10 +102,10 @@
     <el-table v-loading="loading" :data="equipmentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <!--      <el-table-column label="ID" align="center" prop="equipmentId" max-width="100"/>-->
-      <el-table-column label="设备编号" align="center" prop="equipmentIdentity" min-width="120"/>
-      <el-table-column label="所属企业" align="center" prop="enterpriseId">
+      <el-table-column label="设备编号" align="center" prop="equipmentIdentity"/>
+      <el-table-column label="所属企业" align="center" prop="enterpriseName" :show-overflow-tooltip="true">
         <template #default="scope">
-          <dict-tag :options="document_type" :value="scope.row.enterpriseId"/>
+          {{ scope.row.enterpriseName || '--' }}
         </template>
       </el-table-column>
       <el-table-column label="第一次使用" align="center" prop="firstUseTime" width="180">
@@ -144,7 +140,7 @@
                 <span>{{ scope.row.siteVideoUri }}</span>
               </template>
             </el-table-column>-->
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="160">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" min-width="160">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                      v-hasPermi="['seismograph:equipment:edit']">修改
@@ -152,6 +148,10 @@
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
                      v-hasPermi="['seismograph:equipment:remove']">删除
           </el-button>
+          <router-link :to="{path: 'detail', query: {id: scope.row.equipmentId}}"
+                       v-hasPermi="['seismograph:equipment:remove']">
+            <el-button link type="primary" icon="Delete">详情</el-button>
+          </router-link>
         </template>
       </el-table-column>
     </el-table>
@@ -230,11 +230,14 @@
 </template>
 
 <script setup name="Equipment">
+import {getCurrentInstance, reactive, ref} from 'vue'
+import {listEnterprise} from "@/api/seismograph/enterprise";
 import {addEquipment, delEquipment, getEquipment, listEquipment, updateEquipment} from "@/api/seismograph/equipment";
 
 const {proxy} = getCurrentInstance();
 const {document_type, sys_yes_no} = proxy.useDict('document_type', 'sys_yes_no');
 
+const enterpriseList = ref([]);
 const equipmentList = ref([]);
 const open = ref(false);
 const loading = ref(true);
@@ -273,6 +276,9 @@ function getList() {
     equipmentList.value = response.rows;
     total.value = response.total;
     loading.value = false;
+  });
+  listEnterprise({pageNum: 1, pageSize: 1000}).then(response => {
+    enterpriseList.value = response.rows;
   });
 }
 
