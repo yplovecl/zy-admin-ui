@@ -84,4 +84,7 @@ app.use(ElementPlus, {
     size: Cookies.get('size') || 'default'
 })
 
+app._context.components.ElDialog["props"].closeOnClickModal.default = false
+app._context.components.ElDialog["props"].draggable.default = true
+
 app.mount('#app')
