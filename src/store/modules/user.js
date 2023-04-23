@@ -11,6 +11,7 @@ const useUserStore = defineStore(
       name: '',
       avatar: '',
       roles: [],
+      enterprise: {},
       permissions: []
     }),
     actions: {
@@ -42,6 +43,9 @@ const useUserStore = defineStore(
               this.permissions = res.permissions
             } else {
               this.roles = ['ROLE_DEFAULT']
+            }
+            if(user.enterpriseId){
+              this.enterprise = user.enterprise
             }
             this.name = user.userName
             this.avatar = avatar;

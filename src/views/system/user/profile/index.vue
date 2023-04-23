@@ -33,6 +33,10 @@
                         <svg-icon icon-class="peoples" />所属角色
                         <div class="pull-right">{{ state.roleGroup }}</div>
                      </li>
+                     <li v-if="state.user.enterpriseId" class="list-group-item">
+                        <svg-icon icon-class="guide" />所属企业
+                        <div class="pull-right">{{ state.user.enterprise?.name }}</div>
+                     </li>
                      <li class="list-group-item">
                         <svg-icon icon-class="date" />创建日期
                         <div class="pull-right">{{ state.user.createTime }}</div>

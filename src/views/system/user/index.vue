@@ -135,6 +135,7 @@
                <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
                <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
                <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+              <el-table-column label="所属企业" align="center" key="enterpriseName" prop="enterprise.name" v-if="columns[7].visible" :show-overflow-tooltip="true" />
                <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
                <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
                   <template #default="scope">
@@ -279,6 +280,21 @@
             </el-row>
             <el-row>
                <el-col :span="24">
+                 <el-form-item label="所属企业">
+                   <el-select v-model="form.enterpriseId" placeholder="请选择" filterable style="width: 100%">
+                     <el-option
+                         v-for="item in enterpriseOptions"
+                         :key="item.enterpriseId"
+                         :label="item.name"
+                         :value="item.enterpriseId"
+                         :disabled="item.status == '1'"
+                     ></el-option>
+                   </el-select>
+                 </el-form-item>
+               </el-col>
+            </el-row>
+            <el-row>
+               <el-col :span="24">
                   <el-form-item label="备注">
                      <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
                   </el-form-item>
@@ -352,6 +368,7 @@ const deptOptions = ref(undefined);
 const initPassword = ref(undefined);
 const postOptions = ref([]);
 const roleOptions = ref([]);
+const enterpriseOptions = ref([]);
 /*** 用户导入参数 */
 const upload = reactive({
   // 是否显示弹出层（用户导入）
@@ -373,6 +390,7 @@ const columns = ref([
   { key: 1, label: `用户名称`, visible: true },
   { key: 2, label: `用户昵称`, visible: true },
   { key: 3, label: `部门`, visible: true },
+  { key: 7, label: `所属企业`, visible: true },
   { key: 4, label: `手机号码`, visible: true },
   { key: 5, label: `状态`, visible: true },
   { key: 6, label: `创建时间`, visible: true }
@@ -386,7 +404,8 @@ const data = reactive({
     userName: undefined,
     phonenumber: undefined,
     status: undefined,
-    deptId: undefined
+    deptId: undefined,
+    enterpriseId: undefined
   },
   rules: {
     userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
@@ -537,6 +556,7 @@ function reset() {
   form.value = {
     userId: undefined,
     deptId: undefined,
+    enterpriseId: undefined,
     userName: undefined,
     nickName: undefined,
     password: undefined,
@@ -561,6 +581,7 @@ function handleAdd() {
   getUser().then(response => {
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
+    enterpriseOptions.value = response.enterprises;
     open.value = true;
     title.value = "添加用户";
     form.value.password = initPassword.value;
@@ -574,6 +595,7 @@ function handleUpdate(row) {
     form.value = response.data;
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
+    enterpriseOptions.value = response.enterprises;
     form.value.postIds = response.postIds;
     form.value.roleIds = response.roleIds;
     open.value = true;

@@ -30,7 +30,7 @@
             plain
             icon="Plus"
             @click="handleAdd"
-            v-hasPermi="['seismograph:document:add']"
+            v-hasPermi="permissions('add')"
         >新增
         </el-button>
       </el-col>
@@ -41,7 +41,7 @@
             icon="Edit"
             :disabled="single"
             @click="handleUpdate"
-            v-hasPermi="['seismograph:document:edit']"
+            v-hasPermi="permissions('edit')"
         >修改
         </el-button>
       </el-col>
@@ -52,7 +52,7 @@
             icon="Delete"
             :disabled="multiple"
             @click="handleDelete"
-            v-hasPermi="['seismograph:document:remove']"
+            v-hasPermi="permissions('remove')"
         >删除
         </el-button>
       </el-col>
@@ -62,7 +62,7 @@
             plain
             icon="Download"
             @click="handleExport"
-            v-hasPermi="['seismograph:document:export']"
+            v-hasPermi="permissions('export')"
         >导出
         </el-button>
       </el-col>
@@ -80,12 +80,12 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="200">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
-                     v-hasPermi="['seismograph:document:edit']">修改
+                     v-hasPermi="permissions('edit')">修改
           </el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)"
-                     v-hasPermi="['seismograph:document:remove']">删除
+                     v-hasPermi="permissions('remove')">删除
           </el-button>
-          <el-link v-hasPermi="['seismograph:document:download']" :href="`${scope.row.documentUri}`" :underline="false"
+          <el-link v-hasPermi="permissions('download')" :href="`${scope.row.documentUri}`" :underline="false"
                    target="_blank">
             <el-button link type="primary" icon="Download">下载</el-button>
           </el-link>
@@ -146,6 +146,14 @@ const typeName = {
   2: '质检报告',
   3: '更新设备',
 }[type];
+
+const permissions = (a) => {
+  return {
+    1: ['seismograph:manual:' + a],
+    2: ['seismograph:report:' + a],
+    3: ['seismograph:software:' + a],
+  }[type];
+}
 
 const {proxy} = getCurrentInstance();
 const {document_type} = proxy.useDict('document_type');

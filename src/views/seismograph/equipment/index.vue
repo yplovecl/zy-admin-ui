@@ -9,7 +9,7 @@
             @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="所属企业" prop="enterpriseId">
+      <el-form-item v-if="!(userStore.enterprise?.enterpriseId > 0)" label="所属企业" prop="enterpriseId">
         <el-select v-model="queryParams.enterpriseId" placeholder="请选择企业" clearable>
           <el-option v-for="item in enterpriseList" :key="item.enterpriseId" :label="item.name"
                      :value="item.enterpriseId"/>
@@ -103,7 +103,7 @@
       <el-table-column type="selection" width="55" align="center"/>
       <!--      <el-table-column label="ID" align="center" prop="equipmentId" max-width="100"/>-->
       <el-table-column label="设备编号" align="center" prop="equipmentIdentity"/>
-      <el-table-column label="所属企业" align="center" prop="enterpriseName" :show-overflow-tooltip="true">
+      <el-table-column v-if="!userStore.enterprise.enterpriseId" label="所属企业" align="center" prop="enterpriseName" :show-overflow-tooltip="true">
         <template #default="scope">
           {{ scope.row.enterpriseName || '--' }}
         </template>
@@ -149,7 +149,7 @@
                      v-hasPermi="['seismograph:equipment:remove']">删除
           </el-button>
           <router-link :to="{path: 'detail', query: {id: scope.row.equipmentId}}"
-                       v-hasPermi="['seismograph:equipment:remove']">
+                       v-hasPermi="['seismograph:equipment:detail']">
             <el-button link type="primary" icon="Delete">详情</el-button>
           </router-link>
         </template>
@@ -233,9 +233,12 @@
 import {getCurrentInstance, reactive, ref} from 'vue'
 import {listEnterprise} from "@/api/seismograph/enterprise";
 import {addEquipment, delEquipment, getEquipment, listEquipment, updateEquipment} from "@/api/seismograph/equipment";
+import useUserStore from "@/store/modules/user";
 
 const {proxy} = getCurrentInstance();
 const {document_type, sys_yes_no} = proxy.useDict('document_type', 'sys_yes_no');
+
+const userStore = useUserStore()
 
 const enterpriseList = ref([]);
 const equipmentList = ref([]);
@@ -277,9 +280,11 @@ function getList() {
     total.value = response.total;
     loading.value = false;
   });
-  listEnterprise({pageNum: 1, pageSize: 1000}).then(response => {
-    enterpriseList.value = response.rows;
-  });
+  if(!(userStore.enterprise?.enterpriseId)){
+    listEnterprise({pageNum: 1, pageSize: 1000}).then(response => {
+      enterpriseList.value = response.rows;
+    });
+  }
 }
 
 // 取消按钮
