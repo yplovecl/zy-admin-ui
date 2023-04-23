@@ -11,8 +11,6 @@ export default {
     const all_permission = "*:*:*";
     const permissions = useUserStore().permissions
 
-    console.log(binding)
-
     if (value && value instanceof Array && value.length > 0) {
       const permissionFlag = value
 

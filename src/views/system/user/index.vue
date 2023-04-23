@@ -278,7 +278,7 @@
                   </el-form-item>
                </el-col>
             </el-row>
-            <el-row>
+            <el-row v-if="!(userStore.enterprise?.enterpriseId)">
                <el-col :span="24">
                  <el-form-item label="所属企业">
                    <el-select v-model="form.enterpriseId" placeholder="请选择" filterable style="width: 100%">
@@ -348,6 +348,9 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth";
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
+import useUserStore from "@/store/modules/user";
+
+const userStore = useUserStore()
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -556,7 +559,7 @@ function reset() {
   form.value = {
     userId: undefined,
     deptId: undefined,
-    enterpriseId: undefined,
+    enterpriseId: userStore.enterprise?.enterpriseId || undefined,
     userName: undefined,
     nickName: undefined,
     password: undefined,
