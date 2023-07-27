@@ -1,18 +1,14 @@
 <template>
   <div class="app-container home">
     <div>
-      <img :src="logoImg" class="logo"/>
+      <img src="@/assets/logo/logo1.png" class="logo"/>
       <h2>欢迎登陆Blazer数字地震仪安卓系统后台管理端</h2>
     </div>
   </div>
 </template>
 
 <script setup name="Index">
-import logoImg from '@/assets/logo/logo1.png'
-
-function goTarget(url) {
-  window.open(url, '__blank')
-}
+// import logoImg from '@/assets/logo/logo1.png'
 </script>
 
 <style scoped lang="scss">

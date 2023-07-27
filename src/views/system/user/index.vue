@@ -2,7 +2,7 @@
    <div class="app-container">
       <el-row :gutter="20">
          <!--部门数据-->
-         <el-col :span="4" :xs="24">
+         <el-col :span="4" :xs="24" v-hasRole="['admin']">
             <div class="head-container">
                <el-input
                   v-model="deptName"
@@ -27,7 +27,7 @@
             </div>
          </el-col>
          <!--用户数据-->
-         <el-col :span="20" :xs="24">
+         <el-col :span="$auth.hasRole('admin')?20:24" :xs="24">
             <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
                <el-form-item label="用户名称" prop="userName">
                   <el-input
@@ -135,7 +135,7 @@
                <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
                <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
                <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-              <el-table-column label="所属企业" align="center" key="enterpriseName" prop="enterprise.name" v-if="columns[7].visible" :show-overflow-tooltip="true" />
+              <el-table-column label="所属企业" align="center" key="enterpriseName" prop="enterprise.name" v-if="$auth.hasRole('manager') && columns[7].visible" :show-overflow-tooltip="true" />
                <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
                <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
                   <template #default="scope">
@@ -154,16 +154,16 @@
                </el-table-column>
                <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
                   <template #default="scope">
-                     <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 1">
+                     <el-tooltip content="修改" placement="top" v-if="$auth.hasRole('admin') || scope.row.userId !== 2">
                         <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
                      </el-tooltip>
-                     <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
+                     <el-tooltip content="删除" placement="top" v-if="$auth.hasRole('admin') || scope.row.userId !== 2">
                         <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
                      </el-tooltip>
-                     <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
+                     <el-tooltip content="重置密码" placement="top" v-if="$auth.hasRole('admin') || scope.row.userId !== 2">
                          <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
                      </el-tooltip>
-                     <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
+                     <el-tooltip content="分配角色" placement="top" v-if="$auth.hasRole('admin') || scope.row.userId !== 2">
                         <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
                      </el-tooltip>
                   </template>
@@ -193,9 +193,10 @@
                      <el-tree-select
                         v-model="form.deptId"
                         :data="deptOptions"
-                        :props="{ value: 'id', label: 'label', children: 'children' }"
+                        :props="{ value: 'id', label: 'label', children: 'children', disabled: 'disabled' }"
                         value-key="id"
                         placeholder="请选择归属部门"
+                        :default-expanded-keys="[100]"
                         check-strictly
                      />
                   </el-form-item>
@@ -389,15 +390,17 @@ const upload = reactive({
 });
 // 列显隐信息
 const columns = ref([
-  { key: 0, label: `用户编号`, visible: true },
+  { key: 0, label: `用户编号`, visible: false },
   { key: 1, label: `用户名称`, visible: true },
   { key: 2, label: `用户昵称`, visible: true },
   { key: 3, label: `部门`, visible: true },
-  { key: 7, label: `所属企业`, visible: true },
   { key: 4, label: `手机号码`, visible: true },
   { key: 5, label: `状态`, visible: true },
   { key: 6, label: `创建时间`, visible: true }
 ]);
+if(proxy.$auth.hasRole('manager')){
+  columns.value.push( { key: 7, label: `所属企业`, visible: true })
+}
 
 const data = reactive({
   form: {},
@@ -433,7 +436,11 @@ watch(deptName, val => {
 /** 查询部门下拉树结构 */
 function getDeptTree() {
   deptTreeSelect().then(response => {
-    deptOptions.value = response.data;
+    const treeData = response.data || [];
+    if(treeData[0]){
+      treeData[0].disabled = true;
+    }
+    deptOptions.value = treeData;
   });
 };
 /** 查询用户列表 */

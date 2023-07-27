@@ -79,12 +79,12 @@
 
     <el-table v-loading="loading" :data="enterpriseList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="ID" align="center" prop="enterpriseId" width="80"/>
-      <el-table-column label="企业名称" align="center" prop="name" :show-overflow-tooltip="true"/>
-      <el-table-column label="通讯地址" align="center" prop="mailingAddress" :show-overflow-tooltip="true"/>
-      <el-table-column label="社会信用代码" align="center" prop="uniformSocialCreditCode" />
-      <el-table-column label="联系人" align="center" prop="contactPerson" width="100"/>
-      <el-table-column label="联系方式" align="center" prop="contactWay" width="120"/>
+<!--      <el-table-column label="ID" align="center" prop="enterpriseId" width="80"/>-->
+      <el-table-column label="企业名称" prop="name" :show-overflow-tooltip="true"/>
+      <el-table-column label="联系人" prop="contactPerson" width="100"/>
+      <el-table-column label="联系方式" prop="contactWay" width="120"/>
+      <el-table-column label="社会信用代码" prop="uniformSocialCreditCode" />
+      <el-table-column label="通讯地址" prop="mailingAddress" :show-overflow-tooltip="true"/>
       <el-table-column label="企业等级" align="center" prop="enterpriseLevel" width="80">
         <template #default="scope">
           <dict-tag :options="enterprise_level" :value="scope.row.enterpriseLevel"/>
