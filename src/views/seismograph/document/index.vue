@@ -110,14 +110,14 @@
         <el-form-item label="系列名称" prop="equipmentSeries">
           <el-input v-model="form.equipmentSeries" placeholder="请输入系列名称"/>
         </el-form-item>
-        <el-form-item label="设备ID" prop="equipmentIdentity">
+        <el-form-item v-if="type !== 1" label="设备ID" prop="equipmentIdentity">
           <el-input v-model="form.equipmentIdentity" placeholder="请输入设备ID"/>
         </el-form-item>
         <el-form-item label="文档名称" prop="documentName">
           <el-input v-model="form.documentName" placeholder="请输入文档名称"/>
         </el-form-item>
         <el-form-item label="文档" prop="documentUri">
-          <file-upload v-model="form.documentUri"/>
+          <file-upload v-model="form.documentUri" file-size="200"/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -182,10 +182,10 @@ const data = reactive({
       {required: true, message: "类型不能为空", trigger: "change"}
     ],
     documentName: [
-      {required: true, message: "文档不能为空", trigger: "blur"}
+      {required: true, message: "请输入文档名称", trigger: "blur"}
     ],
     documentUri: [
-      {required: true, message: "文档URL不能为空", trigger: "blur"}
+      {required: true, message: "请上传文档", trigger: "blur"}
     ],
   }
 });

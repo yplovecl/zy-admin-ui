@@ -119,7 +119,7 @@
           <el-input v-model="form.version" placeholder="请输入版本号" />
         </el-form-item>
         <el-form-item label="升级包" prop="filePath">
-          <file-upload v-model="form.filePath" file-size="50" :file-type="['zip', 'txt']"/>
+          <file-upload v-model="form.filePath" file-size="50" :file-type="['bin', 'lst']"/>
         </el-form-item>
         <el-form-item label="文件Hash" prop="fileHash">
           <el-input v-model="form.fileHash" placeholder="请输入文件Hash" />

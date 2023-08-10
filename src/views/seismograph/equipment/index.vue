@@ -171,12 +171,13 @@
           <el-input v-model="form.equipmentIdentity" placeholder="请输入设备编号"/>
         </el-form-item>
         <el-form-item label="所属企业" prop="enterpriseId">
-          <el-select v-model="form.enterpriseId" placeholder="请选择企业">
+          <el-select v-model="form.enterpriseId" placeholder="请选择企业" style="width: 100%">
             <el-option
-                v-for="dict in document_type"
-                :key="dict.value"
-                :label="dict.label"
-                :value="parseInt(dict.value)"
+                v-for="item in enterpriseList"
+                :key="item.enterpriseId"
+                :label="item.name"
+                :value="item.enterpriseId"
+                :disabled="item.status === '1'"
             ></el-option>
           </el-select>
         </el-form-item>
