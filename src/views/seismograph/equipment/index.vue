@@ -102,23 +102,23 @@
     <el-table v-loading="loading" :data="equipmentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <!--      <el-table-column label="ID" align="center" prop="equipmentId" max-width="100"/>-->
-      <el-table-column label="设备编号" align="center" prop="equipmentIdentity"/>
+      <el-table-column label="设备编号" align="center" prop="equipmentIdentity" width="180"/>
       <el-table-column v-if="!userStore.enterprise.enterpriseId" label="所属企业" align="center" prop="enterpriseName" :show-overflow-tooltip="true">
         <template #default="scope">
           {{ scope.row.enterpriseName || '--' }}
         </template>
       </el-table-column>
-      <el-table-column label="第一次使用" align="center" prop="firstUseTime" width="180">
-      </el-table-column>
-      <el-table-column label="使用时长" align="center" prop="accumulativeUseTime"/>
-      <!--      <el-table-column label="站点号" align="center" prop="siteNo"/>-->
-      <!--      <el-table-column label="站点名" align="center" prop="siteName"/>-->
-      <el-table-column label="布设人" align="center" prop="deployer"/>
       <el-table-column label="在线" align="center" prop="online" width="80">
         <template #default="scope">
           <dict-tag :options="sys_yes_no" :value="scope.row.online"/>
         </template>
       </el-table-column>
+      <el-table-column label="第一次使用" align="center" prop="firstUseTime" width="150">
+      </el-table-column>
+      <el-table-column label="使用时长" align="center" prop="accumulativeUseTime"/>
+      <!--      <el-table-column label="站点号" align="center" prop="siteNo"/>-->
+      <!--      <el-table-column label="站点名" align="center" prop="siteName"/>-->
+      <el-table-column label="布设人" align="center" prop="deployer"/>
       <!--      <el-table-column label="经度" align="center" prop="siteLocLon" min-width="120" :show-overflow-tooltip="true"/>-->
       <!--      <el-table-column label="纬度" align="center" prop="siteLocLat" min-width="120" :show-overflow-tooltip="true"/>-->
       <el-table-column label="站点地址" align="center" prop="siteLoc" min-width="300" :show-overflow-tooltip="true">
