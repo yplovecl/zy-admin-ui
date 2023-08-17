@@ -268,6 +268,9 @@ const data = reactive({
     equipmentIdentity: [
       {required: true, message: "设备编号不能为空", trigger: "blur"}
     ],
+    enterpriseId: [
+      {required: true, message: "请选择所属企业", trigger: "change"}
+    ],
   }
 });
 
