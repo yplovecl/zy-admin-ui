@@ -68,3 +68,10 @@ export function returnEquipment(data) {
         data: data
     })
 }
+
+export function syncEquipmentData(equipmentId) {
+    return request({
+        url: '/seismograph/equipment/sync/' + equipmentId,
+        method: 'get'
+    })
+}
