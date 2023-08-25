@@ -8,16 +8,24 @@
       </el-col>
     </el-row>
     <el-amap ref="mapRef" :zoom="zoom" :WebGLParams="{ preserveDrawingBuffer: true }">
-      <!--      <template v-for="item in equipmentList">
-              <el-amap-marker v-if="item.siteLocLat && item.siteLocLon" :key="item.enterpriseId" :position="[item.siteLocLon, item.siteLocLat]"/>
-            </template>-->
       <el-amap-layer-labels>
         <template v-for="item in equipmentList">
-          <el-amap-label-marker v-if="item.siteLocLat && item.siteLocLon" :key="item.enterpriseId"
-                                :icon="icon"
-                                :position="[item.siteLocLon, item.siteLocLat]"/>
+          <el-amap-label-marker v-if="item.siteLocLat && item.siteLocLon" :key="item.equipmentIdentity" :icon="icon"
+                                :position="[item.siteLocLon, item.siteLocLat]" @click="showWin(item)"/>
         </template>
       </el-amap-layer-labels>
+      <el-amap-info-window v-if="visible" :position="center" :offset="[0, -45]" :isCustom="true"
+                           closeWhenClickMap>
+        <div class="inf-window">
+          <div>设备编号：{{ deviceDetail.equipmentIdentity }}</div>
+          <div v-hasRole="['admin', 'manager']">所属企业：{{ deviceDetail.enterpriseName || '--' }}</div>
+          <div>在线状态：
+            <el-tag v-if="deviceDetail.online === 'Y'" type="success" effect="light">在线</el-tag>
+            <el-tag v-else type="danger" effect="light">离线</el-tag>
+          </div>
+          <div>设备地址：{{ deviceDetail.siteLoc }}</div>
+        </div>
+      </el-amap-info-window>
     </el-amap>
   </div>
 </template>
@@ -25,17 +33,18 @@
 <script setup name="EquipmentMap">
 import {listEquipment} from "@/api/seismograph/equipment";
 import {Screenshot} from '@amap/screenshot'
+import markerImg from '@/assets/images/poi-marker.png'
 
 const mapRef = ref();
-// const center = ref([121.59996, 31.197646]);
 const zoom = ref(12);
 const icon = ref({
-  image: 'https://a.amap.com/jsapi_demos/static/images/poi-marker.png',
+  image: markerImg,
   anchor: 'bottom-center',
   size: [25, 34],
   clipOrigin: [280, 8],
   clipSize: [50, 68]
 });
+const visible = ref(false);
 
 const equipmentList = ref([]);
 const loading = ref(true);
@@ -47,15 +56,13 @@ const data = reactive({
     pageNum: 1,
     pageSize: 100000,
     enterpriseId: null,
-    params:{
+    params: {
       map: '1'
     }
-  }
+  },
+  deviceDetail: {},
+  center: []
 });
-
-const init = () => {
-  console.log('setup $refs: ', mapRef.value.$$getInstance())
-}
 
 const savePNG = () => {
   // console.log('setup $refs: ', mapRef.value.$$getInstance())
@@ -63,7 +70,7 @@ const savePNG = () => {
   screenshot.download({filename: "地图.png"});
 }
 
-const {queryParams, form, rules} = toRefs(data);
+const {queryParams, form, rules, deviceDetail, center} = toRefs(data);
 
 /** 查询设备列表 */
 function getList() {
@@ -75,6 +82,28 @@ function getList() {
   });
 }
 
+const markerText = (content) => {
+  return {
+    content: content,
+    direction: 'right',
+    style: {
+      fontSize: 14,
+      fillColor: '#fff',
+      // strokeColor: 'rgba(255,0,0,0.5)',
+      // strokeWidth: 2,
+      // padding: [3, 10],
+      backgroundColor: '#409eff',
+      borderColor: '#dcdfe6',
+      borderWidth: 1,
+    }
+  }
+}
+
+const showWin = (data) => {
+  center.value = [data.siteLocLon, data.siteLocLat]
+  deviceDetail.value = data
+  visible.value = true
+}
 getList();
 </script>
 <style lang="scss" scoped>
@@ -88,6 +117,31 @@ getList();
     top: 20px;
     left: 20px;
     z-index: 10;
+  }
+}
+.inf-window{
+  background-color: #fff;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  font-size: 14px;
+  color: #606266;
+  line-height: 24px;
+  >div{
+    white-space:nowrap;
+  }
+  &:after{
+    top: 100%;
+    left: 50%;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+    border: 10px solid rgba(136, 183, 213, 0);
+    border-top-color: #fff;
+    margin-left: -10px;
   }
 }
 </style>
