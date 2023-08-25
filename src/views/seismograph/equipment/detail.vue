@@ -151,10 +151,120 @@
       <el-col :span="12" class="card-box">
         <el-card>
           <template #header>
-            <span style="vertical-align: middle;">设备数据</span>
+            <div class="card-header">
+            <span>设备数据</span>
+            <el-button type="primary" class="button" size="small" @click="router.back()">数据同步</el-button>
+            </div>
           </template>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <div ref="commandstats" style="height: 420px"/>
+            <table cellspacing="0" style="width: 100%">
+              <tbody>
+              <tr>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">电压</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">{{ payload.voltage || '-' }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">电流</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">{{ payload.current }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">方位角</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">{{ payload.azimuth || '-' }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">温度</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">{{ payload.tem || '-' }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">采样率</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">{{ payload.samplingRate || '-' }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">采集持续时间</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">{{ payload.duration }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">采集开始时间</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">{{ payload.startTime || '-' }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">气压</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">{{ payload.pres }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">高程</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">{{ payload.devalt }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">存储容量</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">{{ payload.capacity || '-' }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">剩余容量</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">{{ payload.residual || '-' }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">俯仰角</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">{{ payload.pitchingAngle || '-' }}</div>
+                </td>
+              </tr>
+              <tr>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">翻滚角</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">{{ payload.rollingAngle || '-' }}</div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
           </div>
         </el-card>
       </el-col>
@@ -194,6 +304,7 @@ const {proxy} = getCurrentInstance();
 const data = reactive({
   enterpriseList: [],
   device: {},
+  payload: {},
   form: {},
   rules: {
     equipmentIdentity: [
@@ -208,13 +319,14 @@ const data = reactive({
   }
 });
 
-const {device, form, rules, enterpriseList} = toRefs(data);
+const {device, form, rules, enterpriseList, payload} = toRefs(data);
 
 function getList() {
   proxy.$modal.loading("正在加载设备数据，请稍候！");
   getEquipment(id).then(response => {
     proxy.$modal.closeLoading();
     device.value = response.data;
+    payload.value = response.data?.payload || {};
   })
 }
 
