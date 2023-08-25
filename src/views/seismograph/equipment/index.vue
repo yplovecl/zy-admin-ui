@@ -142,6 +142,9 @@
             </el-table-column>-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" min-width="160">
         <template #default="scope">
+          <el-button link type="primary" icon="Setting" @click="handleDelete(scope.row)"
+                     v-hasPermi="['seismograph:equipment:config']">配置
+          </el-button>
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                      v-hasPermi="['seismograph:equipment:edit']">修改
           </el-button>
@@ -223,6 +226,30 @@
       <template #footer>
         <div class="dialog-footer">
           <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
+    <!-- WR平台⻚⾯配置对话框 -->
+    <el-dialog title="WR平台⻚⾯配置" v-model="open" width="500px" append-to-body>
+      <el-form ref="equipmentRef" :model="form" :rules="rules" label-width="100px">
+        <el-form-item label="设备编号" prop="equipmentIdentity">
+          <el-input v-model="form.equipmentIdentity" placeholder="请输入设备编号"/>
+        </el-form-item>
+        <el-form-item label="使用时长" prop="accumulativeUseTime">
+          <el-input v-model="form.accumulativeUseTime" placeholder="请输入使用时长"/>
+        </el-form-item>
+        <el-form-item label="站点号" prop="siteNo">
+          <el-input v-model="form.siteNo" placeholder="请输入站点号"/>
+        </el-form-item>
+        <el-form-item label="站点名" prop="siteName">
+          <el-input v-model="form.siteName" placeholder="请输入站点名"/>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitForm">保 存</el-button>
           <el-button @click="cancel">取 消</el-button>
         </div>
       </template>
