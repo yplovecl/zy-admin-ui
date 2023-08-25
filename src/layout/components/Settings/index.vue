@@ -79,15 +79,11 @@
 </template>
 
 <script setup>
-import variables from '@/assets/styles/variables.module.scss'
-import originElementPlus from 'element-plus/theme-chalk/index.css'
-import axios from 'axios'
-import { ElLoading, ElMessage } from 'element-plus'
-import { useDynamicTitle } from '@/utils/dynamicTitle'
+import {useDynamicTitle} from '@/utils/dynamicTitle'
 import useAppStore from '@/store/modules/app'
 import useSettingsStore from '@/store/modules/settings'
 import usePermissionStore from '@/store/modules/permission'
-import { handleThemeStyle } from '@/utils/theme'
+import {handleThemeStyle} from '@/utils/theme'
 
 const { proxy } = getCurrentInstance();
 const appStore = useAppStore()

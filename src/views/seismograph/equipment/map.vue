@@ -47,6 +47,9 @@ const data = reactive({
     pageNum: 1,
     pageSize: 100000,
     enterpriseId: null,
+    params:{
+      map: '1'
+    }
   }
 });
 

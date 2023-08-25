@@ -4,7 +4,8 @@ import Cookies from 'js-cookie'
 import VueAMap, {initAMapApiLoader} from '@vuemap/vue-amap';
 import '@vuemap/vue-amap/dist/style.css'
 import ElementPlus from 'element-plus'
-import locale from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
+import 'element-plus/dist/index.css'
+import locale from 'element-plus/es/locale/lang/zh-cn' // 中文语言
 import '@/assets/styles/index.scss' // global css
 import App from './App'
 import store from './store'
