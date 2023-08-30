@@ -398,16 +398,11 @@ const loadChartData = () => {
   chartInstance.value.hideLoading();
   chartInstance.value.setOption({
     xAxis: {
-      type: 'category',
       data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    },
-    yAxis: {
-      type: 'value'
     },
     series: [
       {
         data: [150, 230, 224, 218, 135, 147, 260],
-        type: 'line'
       }
     ]
   })
@@ -415,8 +410,23 @@ const loadChartData = () => {
 const chartInstance = ref();
 onMounted(() => {
   chartInstance.value = echarts.init(chartRef.value);
+  chartInstance.value.setOption({
+    xAxis: {
+      type: 'category',
+      data: []
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        data: [],
+        type: 'line'
+      }
+    ]
+  })
   chartInstance.value.showLoading();
-  loadChartData()
+  setTimeout(loadChartData, 1000)
 })
 getList();
 </script>
