@@ -103,7 +103,8 @@
       <el-table-column type="selection" width="55" align="center"/>
       <!--      <el-table-column label="ID" align="center" prop="equipmentId" max-width="100"/>-->
       <el-table-column label="设备编号" align="center" prop="equipmentIdentity" width="180"/>
-      <el-table-column v-if="!userStore.enterprise.enterpriseId" label="所属企业" align="center" prop="enterpriseName" :show-overflow-tooltip="true">
+      <el-table-column v-if="!userStore.enterprise.enterpriseId" label="所属企业" align="center" prop="enterpriseName"
+                       :show-overflow-tooltip="true">
         <template #default="scope">
           {{ scope.row.enterpriseName || '--' }}
         </template>
@@ -142,7 +143,7 @@
             </el-table-column>-->
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" min-width="160">
         <template #default="scope">
-          <el-button link type="primary" icon="Setting" @click="handleDelete(scope.row)"
+          <el-button link type="primary" icon="Setting" @click="handleConfig(scope.row)"
                      v-hasPermi="['seismograph:equipment:config']">配置
           </el-button>
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
@@ -232,27 +233,13 @@
     </el-dialog>
 
     <!-- WR平台⻚⾯配置对话框 -->
-    <el-dialog title="WR平台⻚⾯配置" v-model="open" width="500px" append-to-body>
-      <el-form ref="equipmentRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="设备编号" prop="equipmentIdentity">
-          <el-input v-model="form.equipmentIdentity" placeholder="请输入设备编号"/>
-        </el-form-item>
-        <el-form-item label="使用时长" prop="accumulativeUseTime">
-          <el-input v-model="form.accumulativeUseTime" placeholder="请输入使用时长"/>
-        </el-form-item>
-        <el-form-item label="站点号" prop="siteNo">
-          <el-input v-model="form.siteNo" placeholder="请输入站点号"/>
-        </el-form-item>
-        <el-form-item label="站点名" prop="siteName">
-          <el-input v-model="form.siteName" placeholder="请输入站点名"/>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">保 存</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
+    <el-dialog title="WR平台配置" v-model="showConfig" class="wr-config" width="500px" append-to-body>
+      <el-tabs v-model="tabName" class="config-tabs">
+        <el-tab-pane label="WIFI配置" name="wifi">WIFI配置</el-tab-pane>
+        <el-tab-pane label="蜂窝网络配置" name="cellular">蜂窝网络配置</el-tab-pane>
+        <el-tab-pane label="系统配置" name="system">系统配置</el-tab-pane>
+        <el-tab-pane label="Task" name="fourth">Task</el-tab-pane>
+      </el-tabs>
     </el-dialog>
   </div>
 </template>
@@ -270,6 +257,7 @@ const userStore = useUserStore()
 
 const enterpriseList = ref([]);
 const equipmentList = ref([]);
+const showConfig = ref(false);
 const open = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
@@ -278,6 +266,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const tabName = ref("wifi");
 
 const data = reactive({
   form: {},
@@ -311,7 +300,7 @@ function getList() {
     total.value = response.total;
     loading.value = false;
   });
-  if(!(userStore.enterprise?.enterpriseId)){
+  if (!(userStore.enterprise?.enterpriseId)) {
     listEnterprise({pageNum: 1, pageSize: 1000}).then(response => {
       enterpriseList.value = response.rows;
     });
@@ -424,5 +413,18 @@ function handleExport() {
   }, `equipment_${new Date().getTime()}.xlsx`)
 }
 
+function handleConfig(row) {
+  showConfig.value = true;
+}
+
 getList();
 </script>
+<style lang="scss">
+.wr-config {
+
+  .el-dialog__body {
+    padding: 0 var(--el-dialog-padding-primary);
+    padding-bottom: var(--el-dialog-padding-primary);
+  }
+}
+</style>

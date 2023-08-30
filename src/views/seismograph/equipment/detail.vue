@@ -274,10 +274,10 @@
       <el-col :span="12" class="card-box">
         <el-card>
           <template #header>
-            <span style="vertical-align: middle;">巡检记录</span>
+            <span>实时波形</span>
           </template>
           <div class="el-table el-table--enable-row-hover el-table--medium">
-            <div ref="usedmemory" style="height: 420px"/>
+            <div ref="chartRef" style="height: 523px"/>
           </div>
         </el-card>
       </el-col>
@@ -291,6 +291,7 @@ import {useRoute, useRouter} from 'vue-router'
 import {getEquipment, returnEquipment, secondedEquipment, syncEquipmentData} from "@/api/seismograph/equipment";
 import useUserStore from "@/store/modules/user";
 import {listEnterprise} from "@/api/seismograph/enterprise";
+import * as echarts from "echarts";
 
 const userStore = useUserStore()
 const route = useRoute();
@@ -302,6 +303,7 @@ if (!parseInt(id)) {
 
 const open = ref(false);
 const {proxy} = getCurrentInstance();
+const chartRef = ref(null);
 
 const data = reactive({
   enterpriseList: [],
@@ -329,6 +331,7 @@ function getList() {
     proxy.$modal.closeLoading();
     device.value = response.data;
     payload.value = response.data?.payload || {};
+    loadChartData()
   })
 }
 
@@ -384,13 +387,32 @@ const loading = ref(false)
 const syncDeviceData = () => {
   loading.value = true;
   syncEquipmentData(id).then(response => {
-    if(response.code === 200){
+    if (response.code === 200) {
       proxy.$modal.msgSuccess("已成功发送指令，等待设备上报数据");
     } else {
       proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
     }
     // getList()
   }).finally(() => loading.value = false)
+}
+
+const loadChartData = () => {
+  const chartInstance = echarts.init(chartRef.value);
+  chartInstance.setOption({
+    xAxis: {
+      type: 'category',
+      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+      type: 'value'
+    },
+    series: [
+      {
+        data: [150, 230, 224, 218, 135, 147, 260],
+        type: 'line'
+      }
+    ]
+  })
 }
 
 getList();
