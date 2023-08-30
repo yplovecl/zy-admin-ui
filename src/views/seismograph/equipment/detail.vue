@@ -331,7 +331,6 @@ function getList() {
     proxy.$modal.closeLoading();
     device.value = response.data;
     payload.value = response.data?.payload || {};
-    loadChartData()
   })
 }
 
@@ -395,10 +394,9 @@ const syncDeviceData = () => {
     // getList()
   }).finally(() => loading.value = false)
 }
-
 const loadChartData = () => {
-  const chartInstance = echarts.init(chartRef.value);
-  chartInstance.setOption({
+  chartInstance.value.hideLoading();
+  chartInstance.value.setOption({
     xAxis: {
       type: 'category',
       data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -414,7 +412,12 @@ const loadChartData = () => {
     ]
   })
 }
-
+const chartInstance = ref();
+onMounted(() => {
+  chartInstance.value = echarts.init(chartRef.value);
+  chartInstance.value.showLoading();
+  loadChartData()
+})
 getList();
 </script>
 <style lang="scss" scoped>
