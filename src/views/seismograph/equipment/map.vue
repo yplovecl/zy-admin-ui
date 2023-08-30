@@ -16,14 +16,14 @@
       </el-amap-layer-labels>
       <el-amap-info-window v-if="visible" :position="center" :offset="[0, -45]" :isCustom="true"
                            closeWhenClickMap>
-        <div class="inf-window">
+        <div class="info-window">
           <div>设备编号：{{ deviceDetail.equipmentIdentity }}</div>
-          <div v-hasRole="['admin', 'manager']">所属企业：{{ deviceDetail.enterpriseName || '--' }}</div>
-          <div>在线状态：
-            <el-tag v-if="deviceDetail.online === 'Y'" type="success" effect="light">在线</el-tag>
-            <el-tag v-else type="danger" effect="light">离线</el-tag>
+          <div class="name" v-hasRole="['admin', 'manager']">所属企业：{{ deviceDetail.enterpriseName || '--' }}</div>
+          <div class="status">在线状态：
+            <span v-if="deviceDetail.online === 'Y'" class="tag online">在线</span>
+            <span v-else class="tag">离线</span>
           </div>
-          <div>设备地址：{{ deviceDetail.siteLoc }}</div>
+          <div class="name">设备地址：{{ deviceDetail.siteLoc }}</div>
         </div>
       </el-amap-info-window>
     </el-amap>
@@ -119,7 +119,8 @@ getList();
     z-index: 10;
   }
 }
-.inf-window{
+
+.info-window {
   background-color: #fff;
   border-radius: 5px;
   display: flex;
@@ -128,10 +129,30 @@ getList();
   font-size: 14px;
   color: #606266;
   line-height: 24px;
-  >div{
-    white-space:nowrap;
+
+  > div {
+    &.name{
+      white-space: nowrap;
+    }
+    &.status{
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .tag{
+        display: flex;
+        padding: 0 5px;
+        font-size: 12px;
+        color: #fff;
+        background-color: #f56c6c;
+        border-radius: 5px;
+        &.online{
+          background-color: #409eff;
+        }
+      }
+    }
   }
-  &:after{
+
+  &:after {
     top: 100%;
     left: 50%;
     content: " ";
