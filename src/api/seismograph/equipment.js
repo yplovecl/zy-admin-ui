@@ -75,3 +75,10 @@ export function syncEquipmentData(equipmentId) {
         method: 'get'
     })
 }
+
+export function getEquipmentWaveform(equipmentId) {
+    return request({
+        url: '/seismograph/equipment/waveform/' + equipmentId,
+        method: 'get'
+    })
+}

@@ -288,7 +288,13 @@
 <script setup name="DeviceDetail">
 import {getCurrentInstance, reactive, ref, toRefs} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import {getEquipment, returnEquipment, secondedEquipment, syncEquipmentData} from "@/api/seismograph/equipment";
+import {
+  getEquipment,
+  getEquipmentWaveform,
+  returnEquipment,
+  secondedEquipment,
+  syncEquipmentData
+} from "@/api/seismograph/equipment";
 import useUserStore from "@/store/modules/user";
 import {listEnterprise} from "@/api/seismograph/enterprise";
 import * as echarts from "echarts";
@@ -395,36 +401,57 @@ const syncDeviceData = () => {
   }).finally(() => loading.value = false)
 }
 const loadChartData = () => {
-  chartInstance.value.hideLoading();
-  chartInstance.value.setOption({
-    xAxis: {
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    },
-    series: [
-      {
-        data: [150, 230, 224, 218, 135, 147, 260],
+  getEquipmentWaveform(id).then(response => {
+    chartInstance.value.hideLoading();
+    const data = response.data || []
+    if(!data || data.length < 1) return;
+    const xAxisData = [], yData = [];
+    for (const waveform of response.data) {
+      for (const val of waveform.dataX) {
+        xAxisData.push(waveform.dateTime)
+        yData.push(val)
       }
-    ]
+    }
+    chartInstance.value.setOption({
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: xAxisData
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [
+        {
+          data: yData,
+          type: 'line',
+          large: true,
+          smooth: true
+        }
+      ]
+    })
+    setTimeout(loadChartData, 200)
   })
 }
 const chartInstance = ref();
 onMounted(() => {
   chartInstance.value = echarts.init(chartRef.value);
-  chartInstance.value.setOption({
-    xAxis: {
-      type: 'category',
-      data: []
-    },
-    yAxis: {
-      type: 'value'
-    },
-    series: [
-      {
-        data: [],
-        type: 'line'
-      }
-    ]
-  })
+  // chartInstance.value.setOption({
+  //   xAxis: {
+  //     type: 'value',
+  //     data: []
+  //   },
+  //   yAxis: {
+  //     type: 'value'
+  //   },
+  //   series: [
+  //     {
+  //       data: [],
+  //       type: 'line',
+  //       large: true
+  //     }
+  //   ]
+  // })
   chartInstance.value.showLoading();
   setTimeout(loadChartData, 1000)
 })
