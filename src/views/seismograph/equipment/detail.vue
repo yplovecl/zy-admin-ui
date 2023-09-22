@@ -444,23 +444,24 @@ let chartInstance = null;
 onMounted(() => {
   chartInstance = echarts.init(chartRef.value);
   chartInstance.setOption({
+    title: {
+      text: '实时波形'
+    },
     tooltip: {
-      show: true,
       trigger: 'axis',
     },
     legend: {
-      type: "scroll",
-      data: ['dataX', 'dataY', 'dataZ'],
-      itemWidth: 18,
-      itemHeight: 12,
-      textStyle: {
-        color: "#00ffff",
-        fontSize: 14,
-      },
+      data: ['dataX', 'dataY', 'dataZ']
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {}
+      }
     },
     xAxis: {
       type: "category",
-      // boundaryGap: false,
+      boundaryGap: false,
+      data: []
     },
     yAxis: {
       type: "value",
@@ -478,7 +479,7 @@ onMounted(() => {
     ],
     series: [
       {
-        name: "dataX波形",
+        name: "dataX",
         type: "line",
         smooth: true,
         symbol: "none",
@@ -486,14 +487,14 @@ onMounted(() => {
         data: []
       },
       {
-        name: "dataY波形",
+        name: "dataY",
         type: "line",
         smooth: true,
         symbol: "none",
         data: []
       },
       {
-        name: "dataZ波形",
+        name: "dataZ",
         type: "line",
         smooth: true,
         symbol: "none",
