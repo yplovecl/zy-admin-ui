@@ -334,10 +334,10 @@ const {device, form, rules, enterpriseList, payload} = toRefs(data);
 function getList() {
   proxy.$modal.loading("正在加载设备数据，请稍候！");
   getEquipment(id).then(response => {
-    proxy.$modal.closeLoading();
+    // proxy.$modal.closeLoading();
     device.value = response.data;
     payload.value = response.data?.payload || {};
-  })
+  }).finally(proxy.$modal.closeLoading)
 }
 
 function loadEnterprise() {
@@ -402,58 +402,69 @@ const syncDeviceData = () => {
 }
 const loadChartData = () => {
   getEquipmentWaveform(id).then(response => {
-    chartInstance.value.hideLoading();
-    const data = response.data || []
-    if(!data || data.length < 1) return;
+    chartInstance.hideLoading();
+    let data = response.data || [];
+    if (!data || data.length < 1) return;
+    // data = data.splice(0, 10);
     const xAxisData = [], yData = [];
-    for (const waveform of response.data) {
+    for (const waveform of data) {
       for (const val of waveform.dataX) {
-        xAxisData.push(waveform.dateTime)
+        xAxisData.push(waveform.dateTime.replace("00", "20"))
         yData.push(val)
       }
     }
-    chartInstance.value.setOption({
+    chartInstance.setOption({
       xAxis: {
-        type: 'category',
-        boundaryGap: false,
         data: xAxisData
-      },
-      yAxis: {
-        type: 'value'
       },
       series: [
         {
           data: yData,
-          type: 'line',
-          large: true,
-          smooth: true
         }
       ]
     })
     setTimeout(loadChartData, 200)
   })
 }
-const chartInstance = ref();
+let chartInstance = null;
 onMounted(() => {
-  chartInstance.value = echarts.init(chartRef.value);
-  // chartInstance.value.setOption({
-  //   xAxis: {
-  //     type: 'value',
-  //     data: []
-  //   },
-  //   yAxis: {
-  //     type: 'value'
-  //   },
-  //   series: [
-  //     {
-  //       data: [],
-  //       type: 'line',
-  //       large: true
-  //     }
-  //   ]
-  // })
-  chartInstance.value.showLoading();
-  setTimeout(loadChartData, 1000)
+  chartInstance = echarts.init(chartRef.value);
+  chartInstance.setOption({
+    tooltip: {
+      show: true,
+      trigger: 'axis',
+    },
+    xAxis: {
+      type: "category",
+      // boundaryGap: false,
+    },
+    yAxis: {
+      type: "value",
+    },
+    dataZoom: [
+      {
+        type: 'inside',
+        start: 80,
+        end: 100
+      },
+      {
+        start: 80,
+        end: 100
+      }
+    ],
+    series: [
+      {
+        name: "dataX波形数据",
+        type: "line",
+        smooth: true,
+        symbol: "none",
+        // areaStyle: {},
+        // data: []
+      },
+    ],
+  })
+  chartInstance.showLoading();
+  setTimeout(loadChartData, 500)
 })
 getList();
 </script>
