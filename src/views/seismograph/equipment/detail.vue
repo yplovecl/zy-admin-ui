@@ -406,11 +406,19 @@ const loadChartData = () => {
     let data = response.data || [];
     if (!data || data.length < 1) return;
     // data = data.splice(0, 10);
-    const xAxisData = [], yData = [];
+    const xAxisData = [], xData = [], yData = [], zData = [];
     for (const waveform of data) {
       for (const val of waveform.dataX) {
         xAxisData.push(waveform.dateTime.replace("00", "20"))
+        xData.push(val)
+      }
+      for (const val of waveform.dataY) {
+        // xAxisData.push(waveform.dateTime.replace("00", "20"))
         yData.push(val)
+      }
+      for (const val of waveform.dataZ) {
+        // xAxisData.push(waveform.dateTime.replace("00", "20"))
+        zData.push(val)
       }
     }
     chartInstance.setOption({
@@ -419,7 +427,13 @@ const loadChartData = () => {
       },
       series: [
         {
+          data: xData,
+        },
+        {
           data: yData,
+        },
+        {
+          data: zData,
         }
       ]
     })
@@ -433,6 +447,16 @@ onMounted(() => {
     tooltip: {
       show: true,
       trigger: 'axis',
+    },
+    legend: {
+      type: "scroll",
+      data: ['dataX', 'dataY', 'dataZ'],
+      itemWidth: 18,
+      itemHeight: 12,
+      textStyle: {
+        color: "#00ffff",
+        fontSize: 14,
+      },
     },
     xAxis: {
       type: "category",
@@ -454,12 +478,26 @@ onMounted(() => {
     ],
     series: [
       {
-        name: "dataX波形数据",
+        name: "dataX波形",
         type: "line",
         smooth: true,
         symbol: "none",
         // areaStyle: {},
-        // data: []
+        data: []
+      },
+      {
+        name: "dataY波形",
+        type: "line",
+        smooth: true,
+        symbol: "none",
+        data: []
+      },
+      {
+        name: "dataZ波形",
+        type: "line",
+        smooth: true,
+        symbol: "none",
+        data: []
       },
     ],
   })
