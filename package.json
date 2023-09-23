@@ -17,7 +17,7 @@
   "dependencies": {
     "@amap/screenshot": "^0.0.3",
     "@element-plus/icons-vue": "2.1.0",
-    "@vuemap/vue-amap": "^2.0.21",
+    "@vuemap/vue-amap": "^2.0.23",
     "@vueup/vue-quill": "1.2.0",
     "@vueuse/core": "10.3.0",
     "axios": "1.4.0",
