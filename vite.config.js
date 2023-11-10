@@ -34,6 +34,11 @@ export default defineConfig(({ mode, command }) => {
           target: 'http://localhost:8080',
           changeOrigin: true,
           rewrite: (p) => p.replace(/^\/dev-api/, '')
+        },
+        '/prod-api': {
+          target: 'http://182.43.59.216:8088',
+          changeOrigin: true,
+          // rewrite: (p) => p.replace(/^\/dev-api/, '')
         }
       }
     },

@@ -5,6 +5,7 @@
         <el-input
             v-model="queryParams.equipmentIdentity"
             placeholder="请输入设备编号"
+            :maxlength="30"
             clearable
             @keyup.enter="handleQuery"
         />
@@ -172,7 +173,7 @@
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="equipmentRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="设备编号" prop="equipmentIdentity">
-          <el-input v-model="form.equipmentIdentity" placeholder="请输入设备编号"/>
+          <el-input v-model="form.equipmentIdentity" maxlength="30" placeholder="请输入设备编号" :show-word-limit="true"/>
         </el-form-item>
         <el-form-item label="所属企业" prop="enterpriseId">
           <el-select v-model="form.enterpriseId" placeholder="请选择企业" style="width: 100%">
@@ -186,7 +187,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="第一次使用" prop="firstUseTime">
-          <el-date-picker clearable
+          <el-date-picker :editable="false"
                           v-model="form.firstUseTime"
                           type="date"
                           value-format="YYYY-MM-DD"
@@ -282,7 +283,9 @@ const data = reactive({
   },
   rules: {
     equipmentIdentity: [
-      {required: true, message: "设备编号不能为空", trigger: "blur"}
+      {required: true, message: "设备编号不能为空", trigger: "blur"},
+      {max: 30, message: "设备编号不能超过30个字符", trigger: "blur"},
+      {min: 10, message: "设备编号不能少于10个字符", trigger: "blur"}
     ],
     enterpriseId: [
       {required: true, message: "请选择所属企业", trigger: "change"}
