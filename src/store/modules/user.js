@@ -8,6 +8,7 @@ const useUserStore = defineStore(
   {
     state: () => ({
       token: getToken(),
+      id: '',
       name: '',
       avatar: '',
       roles: [],
@@ -47,8 +48,9 @@ const useUserStore = defineStore(
             if(user.enterpriseId){
               this.enterprise = user.enterprise
             }
+            this.id = user.userId
             this.name = user.userName
-            this.avatar = avatar;
+            this.avatar = avatar
             resolve(res)
           }).catch(error => {
             reject(error)
