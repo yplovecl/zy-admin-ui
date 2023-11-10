@@ -16,7 +16,7 @@
                      :value="item.enterpriseId"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="站点号" prop="siteNo">
+      <el-form-item label="站点号" v-if="false" prop="siteNo">
         <el-input
             v-model="queryParams.siteNo"
             placeholder="请输入站点号"
@@ -24,7 +24,7 @@
             @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="站点名" prop="siteName">
+      <el-form-item label="站点名" v-if="false" prop="siteName">
         <el-input
             v-model="queryParams.siteName"
             placeholder="请输入站点名"
@@ -32,7 +32,7 @@
             @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="布设人" prop="deployer">
+      <el-form-item label="布设人" v-if="false" prop="deployer">
         <el-input
             v-model="queryParams.deployer"
             placeholder="请输入布设人"
@@ -47,6 +47,26 @@
             clearable
             @keyup.enter="handleQuery"
         />
+      </el-form-item>
+      <el-form-item label="是否在线" prop="online">
+        <el-select v-model="queryParams.online" placeholder="设备是否在线" clearable>
+          <el-option
+              v-for="dict in sys_yes_no"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="5G模块" prop="have5g">
+        <el-select v-model="queryParams.have5g" placeholder="是否带有5G" clearable>
+          <el-option
+              v-for="dict in sys_yes_no"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
@@ -115,12 +135,18 @@
           <dict-tag :options="sys_yes_no" :value="scope.row.online"/>
         </template>
       </el-table-column>
+      <el-table-column label="5G模块" align="center" prop="have5g" width="80">
+        <template #default="scope">
+          <dict-tag :options="sys_yes_no" :value="scope.row.have5g"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="封包间隔(分钟)" align="center" prop="packetTime" width="120"/>
       <el-table-column label="第一次使用" align="center" prop="firstUseTime" width="150">
       </el-table-column>
-      <el-table-column label="使用时长" align="center" prop="accumulativeUseTime"/>
+      <el-table-column label="使用时长" align="center" prop="accumulativeUseTime" width="100"/>
       <!--      <el-table-column label="站点号" align="center" prop="siteNo"/>-->
       <!--      <el-table-column label="站点名" align="center" prop="siteName"/>-->
-      <el-table-column label="布设人" align="center" prop="deployer"/>
+      <!--      <el-table-column label="布设人" align="center" prop="deployer"/>-->
       <!--      <el-table-column label="经度" align="center" prop="siteLocLon" min-width="120" :show-overflow-tooltip="true"/>-->
       <!--      <el-table-column label="纬度" align="center" prop="siteLocLat" min-width="120" :show-overflow-tooltip="true"/>-->
       <el-table-column label="站点地址" align="center" prop="siteLoc" min-width="300" :show-overflow-tooltip="true">
@@ -142,7 +168,7 @@
                 <span>{{ scope.row.siteVideoUri }}</span>
               </template>
             </el-table-column>-->
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" min-width="160">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" min-width="200">
         <template #default="scope">
           <el-button link type="primary" icon="Setting" @click="handleConfig(scope.row)"
                      v-hasPermi="['seismograph:equipment:config']">配置
@@ -186,6 +212,17 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="带有5G" prop="have5g">
+            <el-select v-model="form.have5g" placeholder="是否带有5G">
+              <el-option key="Y" label="是" value="Y"/>
+              <el-option key="N" label="否" value="N"/>
+            </el-select>
+        </el-form-item>
+        <el-form-item label="封包间隔" prop="packetTime">
+          <el-select v-model="form.packetTime" placeholder="请选择封包间隔时间">
+            <el-option v-for="val in 30" :key="val" :label="`${val}分钟`" :value="val"/>
+          </el-select>
+        </el-form-item>
         <el-form-item label="第一次使用" prop="firstUseTime">
           <el-date-picker :editable="false"
                           v-model="form.firstUseTime"
@@ -194,9 +231,9 @@
                           placeholder="请选择第一次使用">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="使用时长" prop="accumulativeUseTime">
+<!--        <el-form-item label="使用时长" prop="accumulativeUseTime">
           <el-input v-model="form.accumulativeUseTime" placeholder="请输入使用时长"/>
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label="站点号" prop="siteNo">
           <el-input v-model="form.siteNo" placeholder="请输入站点号"/>
         </el-form-item>
@@ -209,12 +246,12 @@
         <el-form-item label="站点地址" prop="siteLoc">
           <el-input v-model="form.siteLoc" placeholder="请输入站点地址"/>
         </el-form-item>
-        <el-form-item label="经度" prop="siteLocLon">
+<!--        <el-form-item label="经度" prop="siteLocLon">
           <el-input v-model="form.siteLocLon" placeholder="请输入经度"/>
         </el-form-item>
         <el-form-item label="纬度" prop="siteLocLat">
           <el-input v-model="form.siteLocLat" placeholder="请输入纬度"/>
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label="站点图片" prop="siteImageUri">
           <image-upload v-model="form.siteImageUri"/>
         </el-form-item>
@@ -280,6 +317,8 @@ const data = reactive({
     siteName: null,
     deployer: null,
     siteLoc: null,
+    online: null,
+    have5g: null,
   },
   rules: {
     equipmentIdentity: [
@@ -323,6 +362,9 @@ function reset() {
     equipmentIdentity: null,
     enterpriseId: null,
     firstUseTime: null,
+    online: 'N',
+    have5g: 'Y',
+    packetTime: 5,
     accumulativeUseTime: null,
     siteNo: null,
     siteName: null,
