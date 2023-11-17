@@ -235,16 +235,16 @@
           <el-input v-model="form.accumulativeUseTime" placeholder="请输入使用时长"/>
         </el-form-item>-->
         <el-form-item label="站点号" prop="siteNo">
-          <el-input v-model="form.siteNo" placeholder="请输入站点号"/>
+          <el-input v-model="form.siteNo" placeholder="请输入站点号" maxlength="12"/>
         </el-form-item>
         <el-form-item label="站点名" prop="siteName">
-          <el-input v-model="form.siteName" placeholder="请输入站点名"/>
+          <el-input v-model="form.siteName" placeholder="请输入站点名" maxlength="20"/>
         </el-form-item>
         <el-form-item label="布设人" prop="deployer">
-          <el-input v-model="form.deployer" placeholder="请输入布设人"/>
+          <el-input v-model="form.deployer" placeholder="请输入布设人" maxlength="20"/>
         </el-form-item>
         <el-form-item label="站点地址" prop="siteLoc">
-          <el-input v-model="form.siteLoc" placeholder="请输入站点地址"/>
+          <el-input v-model="form.siteLoc" placeholder="请输入站点地址" maxlength="100"/>
         </el-form-item>
 <!--        <el-form-item label="经度" prop="siteLocLon">
           <el-input v-model="form.siteLocLon" placeholder="请输入经度"/>
@@ -259,7 +259,7 @@
           <file-upload v-model="form.siteVideoUri"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注"/>
+          <el-input v-model="form.remark" placeholder="请输入备注" maxlength="50"/>
         </el-form-item>
       </el-form>
       <template #footer>

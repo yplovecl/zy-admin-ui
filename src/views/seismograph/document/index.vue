@@ -108,13 +108,13 @@
           <el-input v-model="form.type" placeholder="请输入类型"/>
         </el-form-item>
         <el-form-item label="系列名称" prop="equipmentSeries">
-          <el-input v-model="form.equipmentSeries" placeholder="请输入系列名称"/>
+          <el-input v-model="form.equipmentSeries" placeholder="请输入系列名称" maxlength="50"/>
         </el-form-item>
         <el-form-item v-if="type !== 1" label="设备ID" prop="equipmentIdentity">
-          <el-input v-model="form.equipmentIdentity" placeholder="请输入设备ID"/>
+          <el-input v-model="form.equipmentIdentity" placeholder="请输入设备ID" maxlength="30"/>
         </el-form-item>
         <el-form-item label="文档名称" prop="documentName">
-          <el-input v-model="form.documentName" placeholder="请输入文档名称"/>
+          <el-input v-model="form.documentName" placeholder="请输入文档名称" maxlength="50"/>
         </el-form-item>
         <el-form-item label="文档" prop="documentUri">
           <file-upload v-model="form.documentUri" file-size="200"/>

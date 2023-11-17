@@ -106,7 +106,7 @@
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="firmwareRef" :model="form" :rules="rules" label-width="100px">
         <el-form-item label="固件类型" prop="firmwareType">
-          <el-select v-model="form.firmwareType" placeholder="请选择固件类型">
+          <el-select v-model="form.firmwareType" placeholder="请选择固件类型" style="width: 100%">
             <el-option
                 v-for="dict in firmware_type"
                 :key="dict.value"
@@ -116,16 +116,16 @@
           </el-select>
         </el-form-item>
         <el-form-item label="版本号" prop="version">
-          <el-input v-model="form.version" placeholder="请输入版本号" />
+          <el-input v-model="form.version" placeholder="请输入版本号" maxlength="50" show-word-limit/>
         </el-form-item>
         <el-form-item label="升级包" prop="filePath">
           <file-upload v-model="form.filePath" file-size="50" :file-type="['bin', 'lst']"/>
         </el-form-item>
         <el-form-item label="文件Hash" prop="fileHash">
-          <el-input v-model="form.fileHash" placeholder="请输入文件Hash" />
+          <el-input v-model="form.fileHash" placeholder="请输入文件Hash" maxlength="50" show-word-limit/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" rows="3"/>
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" rows="3" maxlength="500" show-word-limit/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -201,7 +201,7 @@ function cancel() {
 function reset() {
   form.value = {
     firmwareId: null,
-    firmwareType: null,
+    firmwareType: 1,
     version: null,
     filePath: null,
     fileHash: null,

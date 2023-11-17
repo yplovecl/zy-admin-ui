@@ -115,13 +115,13 @@
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="versionRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="版本号" prop="no">
-          <el-input v-model="form.no" placeholder="请输入版本号" />
+          <el-input v-model="form.no" placeholder="请输入版本号" maxlength="50" show-word-limit/>
         </el-form-item>
         <el-form-item label="版本日志" prop="log">
-          <el-input v-model="form.log" type="textarea" placeholder="请输入内容" />
+          <el-input v-model="form.log" type="textarea" placeholder="请输入内容" maxlength="200" show-word-limit/>
         </el-form-item>
         <el-form-item label="下载地址" prop="uri">
-          <el-input v-model="form.uri" placeholder="请输入下载地址" />
+          <el-input v-model="form.uri" placeholder="请输入下载地址" maxlength="200" show-word-limit/>
         </el-form-item>
         <el-form-item label="类别" prop="type">
           <el-select v-model="form.type" placeholder="请选择类别">
@@ -223,8 +223,8 @@ function reset() {
     no: null,
     log: null,
     uri: null,
-    type: null,
-    enforce: null,
+    type: '1',
+    enforce: 'Y',
     createTime: null,
     updateTime: null
   };

@@ -121,22 +121,22 @@
     <el-dialog :title="title" v-model="open" width="500px" append-to-body>
       <el-form ref="enterpriseRef" :model="form" :rules="rules" label-width="120px">
         <el-form-item label="企业名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入企业名称" />
+          <el-input v-model="form.name" placeholder="请输入企业名称" maxlength="50" show-word-limit/>
         </el-form-item>
         <el-form-item label="企业简称" prop="abbreviation">
-          <el-input v-model="form.abbreviation" placeholder="请输入企业简称" />
+          <el-input v-model="form.abbreviation" placeholder="请输入企业简称" maxlength="20"/>
         </el-form-item>
         <el-form-item label="通讯地址" prop="mailingAddress">
-          <el-input v-model="form.mailingAddress" placeholder="请输入通讯地址" />
+          <el-input v-model="form.mailingAddress" placeholder="请输入通讯地址" maxlength="60"/>
         </el-form-item>
         <el-form-item label="社会信用代码" prop="uniformSocialCreditCode">
-          <el-input v-model="form.uniformSocialCreditCode" placeholder="请输入社会信用代码" />
+          <el-input v-model="form.uniformSocialCreditCode" placeholder="请输入社会信用代码" maxlength="18"/>
         </el-form-item>
         <el-form-item label="联系人" prop="contactPerson">
-          <el-input v-model="form.contactPerson" placeholder="请输入联系人" />
+          <el-input v-model="form.contactPerson" placeholder="请输入联系人" maxlength="20"/>
         </el-form-item>
         <el-form-item label="联系方式" prop="contactWay">
-          <el-input v-model="form.contactWay" placeholder="请输入联系方式" />
+          <el-input v-model="form.contactWay" placeholder="请输入联系方式" maxlength="11"/>
         </el-form-item>
         <el-form-item label="企业等级" prop="enterpriseLevel">
           <el-select v-model="form.enterpriseLevel" placeholder="请选择企业等级">
