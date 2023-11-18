@@ -153,9 +153,22 @@
           <template #header>
             <div class="card-header">
               <span>设备数据</span>
-              <el-button type="primary" class="button" size="small" @click="syncDeviceData" :loading="loading">
-                数据同步
-              </el-button>
+
+              <el-button-group class="ml-4">
+                <el-popconfirm title="确定停止PPP?" @confirm="sendCmdHex('3A01A5')">
+                  <template #reference>
+                    <el-button type="info" class="button" :loading="loading">停止PPP</el-button>
+                  </template>
+                </el-popconfirm>
+                <el-popconfirm title="确定启动PPP?" @confirm="sendCmdHex('3A01A4')">
+                  <template #reference>
+                    <el-button type="success" class="button" :loading="loading">启动PPP</el-button>
+                  </template>
+                </el-popconfirm>
+                <el-button type="primary" class="button" @click="syncDeviceData" :loading="loading">
+                  数据同步
+                </el-button>
+              </el-button-group>
             </div>
           </template>
           <div class="el-table el-table--enable-row-hover el-table--medium">
@@ -288,13 +301,7 @@
 <script setup name="DeviceDetail">
 import {getCurrentInstance, reactive, ref, toRefs} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import {
-  getEquipment,
-  getEquipmentWaveform,
-  returnEquipment,
-  secondedEquipment,
-  syncEquipmentData
-} from "@/api/seismograph/equipment";
+import {getEquipment, getEquipmentWaveform, returnEquipment, secondedEquipment, send5gCommandHex, syncEquipmentData} from "@/api/seismograph/equipment";
 import useUserStore from "@/store/modules/user";
 import {listEnterprise} from "@/api/seismograph/enterprise";
 import * as echarts from "echarts";
@@ -399,6 +406,16 @@ const syncDeviceData = () => {
     }
     // getList()
   }).finally(() => loading.value = false)
+}
+const sendCmdHex = (hex) => {
+  // loading.value = true;
+  send5gCommandHex(id, {hex}).then(response => {
+    if (response.code === 200) {
+      proxy.$modal.msgSuccess("指令已发送");
+    } else {
+      proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
+    }
+  })
 }
 const loadChartData = () => {
   getEquipmentWaveform(id).then(response => {

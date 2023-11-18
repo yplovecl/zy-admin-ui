@@ -82,3 +82,12 @@ export function getEquipmentWaveform(equipmentId) {
         method: 'get'
     })
 }
+
+
+export function send5gCommandHex(equipmentId, data) {
+    return request({
+        url: '/seismograph/equipment/sendCommandHex/' + equipmentId,
+        method: 'post',
+        data: data
+    })
+}
