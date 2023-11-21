@@ -124,22 +124,22 @@
           <el-input v-model="form.name" placeholder="请输入企业名称" maxlength="50" show-word-limit/>
         </el-form-item>
         <el-form-item label="企业简称" prop="abbreviation">
-          <el-input v-model="form.abbreviation" placeholder="请输入企业简称" maxlength="20"/>
+          <el-input v-model="form.abbreviation" placeholder="请输入企业简称" maxlength="20" show-word-limit/>
         </el-form-item>
         <el-form-item label="通讯地址" prop="mailingAddress">
-          <el-input v-model="form.mailingAddress" placeholder="请输入通讯地址" maxlength="60"/>
+          <el-input v-model="form.mailingAddress" placeholder="请输入通讯地址" maxlength="60" show-word-limit/>
         </el-form-item>
         <el-form-item label="社会信用代码" prop="uniformSocialCreditCode">
-          <el-input v-model="form.uniformSocialCreditCode" placeholder="请输入社会信用代码" maxlength="18"/>
+          <el-input v-model="form.uniformSocialCreditCode" placeholder="请输入社会信用代码" maxlength="18" show-word-limit/>
         </el-form-item>
         <el-form-item label="联系人" prop="contactPerson">
-          <el-input v-model="form.contactPerson" placeholder="请输入联系人" maxlength="20"/>
+          <el-input v-model="form.contactPerson" placeholder="请输入联系人" maxlength="20" show-word-limit/>
         </el-form-item>
         <el-form-item label="联系方式" prop="contactWay">
-          <el-input v-model="form.contactWay" placeholder="请输入联系方式" maxlength="11"/>
+          <el-input v-model="form.contactWay" placeholder="请输入联系方式" maxlength="11" show-word-limit/>
         </el-form-item>
         <el-form-item label="企业等级" prop="enterpriseLevel">
-          <el-select v-model="form.enterpriseLevel" placeholder="请选择企业等级">
+          <el-select v-model="form.enterpriseLevel" placeholder="请选择企业等级" style="width: 100%">
             <el-option
                 v-for="dict in enterprise_level"
                 :key="dict.value"
@@ -152,7 +152,6 @@
           <el-input-number v-model="form.numberOfUsers" :min="1" :max="1000"/>
         </el-form-item>
         <el-form-item label="空间大小" prop="useDiskSize">
-<!--          <el-input v-model="form.useDiskSize" placeholder="请输入空间大小" />-->
           <el-input-number v-model="form.useDiskSize" :min="1" :max="100"/>
         </el-form-item>
         <el-form-item label="状态" prop="status">

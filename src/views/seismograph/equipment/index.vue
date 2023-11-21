@@ -40,13 +40,23 @@
             @keyup.enter="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="站点地址" prop="siteLoc">
+      <el-form-item label="站点地址" v-if="false" prop="siteLoc">
         <el-input
             v-model="queryParams.siteLoc"
             placeholder="请输入站点地址"
             clearable
             @keyup.enter="handleQuery"
         />
+      </el-form-item>
+      <el-form-item label="工作模式" prop="workMode">
+        <el-select v-model="queryParams.workMode" placeholder="波形上传模式" clearable>
+          <el-option
+              v-for="dict in device_work_mode"
+              :key="dict.value"
+              :label="dict.label"
+              :value="dict.value"
+          />
+        </el-select>
       </el-form-item>
       <el-form-item label="是否在线" prop="online">
         <el-select v-model="queryParams.online" placeholder="设备是否在线" clearable>
@@ -140,10 +150,19 @@
           <dict-tag :options="sys_yes_no" :value="scope.row.have5g"/>
         </template>
       </el-table-column>
-      <el-table-column label="封包间隔(分钟)" align="center" prop="packetTime" width="120"/>
+      <el-table-column label="封包间隔" align="center" prop="packetTime" width="100">
+        <template #default="scope">
+          {{ scope.row.packetTime }}分钟
+        </template>
+      </el-table-column>
       <el-table-column label="第一次使用" align="center" prop="firstUseTime" width="150">
       </el-table-column>
-      <el-table-column label="使用时长" align="center" prop="accumulativeUseTime" width="100"/>
+      <el-table-column label="工作模式" align="center" prop="workMode" width="100">
+        <template #default="scope">
+          <dict-tag :options="device_work_mode" :value="scope.row.workMode"/>
+        </template>
+      </el-table-column>
+      <!--      <el-table-column label="使用时长" align="center" prop="accumulativeUseTime" width="100"/>-->
       <!--      <el-table-column label="站点号" align="center" prop="siteNo"/>-->
       <!--      <el-table-column label="站点名" align="center" prop="siteName"/>-->
       <!--      <el-table-column label="布设人" align="center" prop="deployer"/>-->
@@ -196,71 +215,131 @@
     />
 
     <!-- 添加或修改设备对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
+    <el-dialog :title="title" v-model="open" width="800px" append-to-body>
       <el-form ref="equipmentRef" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="设备编号" prop="equipmentIdentity">
-          <el-input v-model="form.equipmentIdentity" maxlength="30" placeholder="请输入设备编号" :show-word-limit="true"/>
-        </el-form-item>
-        <el-form-item label="所属企业" prop="enterpriseId">
-          <el-select v-model="form.enterpriseId" placeholder="请选择企业" style="width: 100%">
-            <el-option
-                v-for="item in enterpriseList"
-                :key="item.enterpriseId"
-                :label="item.name"
-                :value="item.enterpriseId"
-                :disabled="item.status === '1'"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="带有5G" prop="have5g">
-            <el-select v-model="form.have5g" placeholder="是否带有5G">
-              <el-option key="Y" label="是" value="Y"/>
-              <el-option key="N" label="否" value="N"/>
-            </el-select>
-        </el-form-item>
-        <el-form-item label="封包间隔" prop="packetTime">
-          <el-select v-model="form.packetTime" placeholder="请选择封包间隔时间">
-            <el-option v-for="val in 30" :key="val" :label="`${val}分钟`" :value="val"/>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="第一次使用" prop="firstUseTime">
-          <el-date-picker :editable="false"
-                          v-model="form.firstUseTime"
-                          type="date"
-                          value-format="YYYY-MM-DD"
-                          placeholder="请选择第一次使用">
-          </el-date-picker>
-        </el-form-item>
-<!--        <el-form-item label="使用时长" prop="accumulativeUseTime">
-          <el-input v-model="form.accumulativeUseTime" placeholder="请输入使用时长"/>
-        </el-form-item>-->
-        <el-form-item label="站点号" prop="siteNo">
-          <el-input v-model="form.siteNo" placeholder="请输入站点号" maxlength="12"/>
-        </el-form-item>
-        <el-form-item label="站点名" prop="siteName">
-          <el-input v-model="form.siteName" placeholder="请输入站点名" maxlength="20"/>
-        </el-form-item>
-        <el-form-item label="布设人" prop="deployer">
-          <el-input v-model="form.deployer" placeholder="请输入布设人" maxlength="20"/>
-        </el-form-item>
-        <el-form-item label="站点地址" prop="siteLoc">
-          <el-input v-model="form.siteLoc" placeholder="请输入站点地址" maxlength="100"/>
-        </el-form-item>
-<!--        <el-form-item label="经度" prop="siteLocLon">
-          <el-input v-model="form.siteLocLon" placeholder="请输入经度"/>
-        </el-form-item>
-        <el-form-item label="纬度" prop="siteLocLat">
-          <el-input v-model="form.siteLocLat" placeholder="请输入纬度"/>
-        </el-form-item>-->
-        <el-form-item label="站点图片" prop="siteImageUri">
-          <image-upload v-model="form.siteImageUri"/>
-        </el-form-item>
-        <el-form-item label="站点视频" prop="siteVideoUri">
-          <file-upload v-model="form.siteVideoUri"/>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" maxlength="50"/>
-        </el-form-item>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="设备编号" prop="equipmentIdentity">
+              <el-input v-model="form.equipmentIdentity" maxlength="30" placeholder="请输入设备编号"
+                        :show-word-limit="true"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="带有5G" prop="have5g">
+              <el-select v-model="form.have5g" placeholder="是否带有5G" style="width: 100%">
+                <el-option key="Y" label="是" value="Y"/>
+                <el-option key="N" label="否" value="N"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="所属企业" prop="enterpriseId">
+              <el-select v-model="form.enterpriseId" placeholder="请选择企业" style="width: 100%">
+                <el-option
+                    v-for="item in enterpriseList"
+                    :key="item.enterpriseId"
+                    :label="item.name"
+                    :value="item.enterpriseId"
+                    :disabled="item.status === '1'"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="封包间隔" prop="packetTime">
+              <el-select v-model="form.packetTime" placeholder="请选择封包间隔时间" style="width: 100%">
+                <el-option v-for="val in 30" :key="val" :label="`${val}分钟`" :value="val"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="第一次使用" prop="firstUseTime">
+              <el-date-picker :editable="false"
+                              v-model="form.firstUseTime"
+                              type="date"
+                              value-format="YYYY-MM-DD"
+                              placeholder="请选择第一次使用">
+              </el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="工作模式" prop="workMode">
+              <el-select v-model="form.workMode" placeholder="请选择波形上传模式" style="width: 100%">
+                <el-option
+                    v-for="dict in device_work_mode"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="使用时长" prop="accumulativeUseTime">
+              <el-input v-model="form.accumulativeUseTime" readonly placeholder="使用时长"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="站点号" prop="siteNo">
+              <el-input v-model="form.siteNo" placeholder="请输入站点号" maxlength="12"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="布设人" prop="deployer">
+              <el-input v-model="form.deployer" placeholder="请输入布设人" maxlength="20"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="站点名" prop="siteName">
+              <el-input v-model="form.siteName" placeholder="请输入站点名" maxlength="20"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="站点地址" prop="siteLoc">
+              <el-input v-model="form.siteLoc" placeholder="请输入站点地址" maxlength="100"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="备注" prop="remark">
+              <el-input v-model="form.remark" placeholder="请输入备注" maxlength="50"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="经度" prop="siteLocLon">
+              <el-input v-model="form.siteLocLon" placeholder="请输入经度"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="纬度" prop="siteLocLat">
+              <el-input v-model="form.siteLocLat" placeholder="请输入纬度"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-if="false">
+          <el-col :span="12">
+            <el-form-item label="站点图片" prop="siteImageUri">
+              <image-upload v-model="form.siteImageUri"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="站点视频" prop="siteVideoUri">
+              <file-upload v-model="form.siteVideoUri"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -289,7 +368,7 @@ import {addEquipment, delEquipment, getEquipment, listEquipment, updateEquipment
 import useUserStore from "@/store/modules/user";
 
 const {proxy} = getCurrentInstance();
-const {document_type, sys_yes_no} = proxy.useDict('document_type', 'sys_yes_no');
+const {document_type, sys_yes_no, device_work_mode} = proxy.useDict('document_type', 'sys_yes_no', 'device_work_mode');
 
 const userStore = useUserStore()
 
@@ -319,6 +398,7 @@ const data = reactive({
     siteLoc: null,
     online: null,
     have5g: null,
+    workMode: null,
   },
   rules: {
     equipmentIdentity: [
@@ -328,6 +408,15 @@ const data = reactive({
     ],
     enterpriseId: [
       {required: true, message: "请选择所属企业", trigger: "change"}
+    ],
+    have5g: [
+      {required: true, message: "请选择是否带有5G", trigger: "change"}
+    ],
+    packetTime: [
+      {required: true, message: "请选择封包间隔时间", trigger: "change"}
+    ],
+    workMode: [
+      {required: true, message: "请选择工作模式", trigger: "change"}
     ],
   }
 });
@@ -375,6 +464,7 @@ function reset() {
     siteImageUri: null,
     siteVideoUri: null,
     remark: null,
+    workMode: 'continuous',
     createTime: null,
     updateTime: null
   };
