@@ -37,6 +37,27 @@
               </tr>
               <tr>
                 <td class="el-table__cell is-leaf">
+                  <div class="cell">5G模块</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">
+                    <el-tag v-if="device.have5g === 'Y'" type="success" size="default">是</el-tag>
+                    <el-tag v-else type="danger" size="default">否</el-tag>
+                  </div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">工作模式</div>
+                </td>
+                <td class="el-table__cell is-leaf">
+                  <div class="cell">
+                    <el-tag v-if="device.workMode === 'spacing'" type="success" size="default">间隔上传</el-tag>
+                    <el-tag v-else-if="device.workMode === 'continuous'" type="primary" size="default">连续上传</el-tag>
+                    <el-tag v-else type="danger" size="default">未知{{device.workMode}}</el-tag>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="el-table__cell is-leaf">
                   <div class="cell">是否在线</div>
                 </td>
                 <td class="el-table__cell is-leaf">
