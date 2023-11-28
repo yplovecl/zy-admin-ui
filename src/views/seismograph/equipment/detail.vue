@@ -156,30 +156,45 @@
               <el-button-group class="ml-4">
                 <el-popconfirm title="确定打开波形?" @confirm="sendCmdHex('3A0154')">
                   <template #reference>
-                    <el-button type="primary" class="button" :loading="loading">打开波形</el-button>
+                    <el-button type="primary" icon="Open" class="button" size="small">打开波形</el-button>
                   </template>
                 </el-popconfirm>
                 <el-popconfirm title="确定关闭波形?" @confirm="sendCmdHex('3A0155')">
                   <template #reference>
-                    <el-button type="danger" class="button" :loading="loading">关闭波形</el-button>
+                    <el-button type="danger" icon="SwitchButton" class="button" size="small">关闭波形</el-button>
                   </template>
                 </el-popconfirm>
               </el-button-group>
               <el-button-group class="ml-4">
                 <el-popconfirm title="确定停止PPP?" @confirm="sendCmdHex('3A01A5')">
                   <template #reference>
-                    <el-button type="info" class="button" :loading="loading">停止PPP</el-button>
+                    <el-button type="danger" icon="SwitchButton" class="button" size="small">停止PPP</el-button>
                   </template>
                 </el-popconfirm>
                 <el-popconfirm title="确定启动PPP?" @confirm="sendCmdHex('3A01A4')">
                   <template #reference>
-                    <el-button type="success" class="button" :loading="loading">启动PPP</el-button>
+                    <el-button type="primary" icon="Open" class="button" size="small">启动PPP</el-button>
                   </template>
                 </el-popconfirm>
-                <el-button type="primary" class="button" @click="syncDeviceData" :loading="loading">
+                <el-button type="success" class="button" icon="Refresh" @click="syncDeviceData" :loading="loading" size="small">
                   数据同步
                 </el-button>
+                <el-button v-if="false" type="info" class="button" icon="Setting" size="small">
+                  更多设置
+                </el-button>
               </el-button-group>
+              <el-dropdown v-if="false" split-button type="primary" @click="syncDeviceData" :loading="loading" trigger="click" size="small">
+                数据同步
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item icon="Open" @click="sendCmdHex('3A01A4')">启动PPP</el-dropdown-item>
+                    <el-dropdown-item icon="TurnOff" @click="sendCmdHex('3A01A5')">停止PPP</el-dropdown-item>
+                    <el-dropdown-item icon="Open" divided @click="sendCmdHex('3A0154')">打开波形</el-dropdown-item>
+                    <el-dropdown-item icon="SwitchButton" @click="sendCmdHex('3A0155')">关闭波形</el-dropdown-item>
+                    <el-dropdown-item icon="Setting" divided>更多配置</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </template>
           <div class="el-table el-table--enable-row-hover el-table--medium">
