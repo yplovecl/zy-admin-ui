@@ -153,7 +153,18 @@
           <template #header>
             <div class="card-header">
               <span>设备数据</span>
-
+              <el-button-group class="ml-4">
+                <el-popconfirm title="确定打开波形?" @confirm="sendCmdHex('3A0154')">
+                  <template #reference>
+                    <el-button type="primary" class="button" :loading="loading">打开波形</el-button>
+                  </template>
+                </el-popconfirm>
+                <el-popconfirm title="确定关闭波形?" @confirm="sendCmdHex('3A0155')">
+                  <template #reference>
+                    <el-button type="danger" class="button" :loading="loading">关闭波形</el-button>
+                  </template>
+                </el-popconfirm>
+              </el-button-group>
               <el-button-group class="ml-4">
                 <el-popconfirm title="确定停止PPP?" @confirm="sendCmdHex('3A01A5')">
                   <template #reference>
