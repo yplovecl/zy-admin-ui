@@ -217,7 +217,6 @@
     <!-- 添加或修改设备对话框 -->
     <el-dialog :title="title" v-model="open" width="800px" append-to-body>
       <el-form ref="equipmentRef" :model="form" :rules="rules" label-width="100px">
-
         <el-row>
           <el-col :span="12">
             <el-form-item label="设备编号" prop="equipmentIdentity">

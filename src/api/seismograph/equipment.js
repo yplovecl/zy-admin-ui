@@ -95,7 +95,7 @@ export function send5gCommandHex(equipmentId, data) {
 
 export function sendCmdControl(equipmentId, type) {
     return request({
-        url: '/seismograph/equipment/sendCommandHex/' + equipmentId + '/' + type,
+        url: '/seismograph/equipment/sendCmdControl/' + equipmentId + '/' + type,
         method: 'get'
     })
 }
@@ -103,7 +103,7 @@ export function sendCmdControl(equipmentId, type) {
 
 export function sendCmdConfig(equipmentId, data) {
     return request({
-        url: '/seismograph/equipment/sendCommandHex/' + equipmentId,
+        url: '/seismograph/equipment/sendCmdConfig/' + equipmentId,
         method: 'post',
         data: data
     })

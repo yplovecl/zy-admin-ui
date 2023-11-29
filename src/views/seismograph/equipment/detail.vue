@@ -52,7 +52,7 @@
                   <div class="cell">
                     <el-tag v-if="device.workMode === 'spacing'" type="success" size="default">间隔上传</el-tag>
                     <el-tag v-else-if="device.workMode === 'continuous'" type="primary" size="default">连续上传</el-tag>
-                    <el-tag v-else type="danger" size="default">未知{{device.workMode}}</el-tag>
+                    <el-tag v-else type="danger" size="default">未知{{ device.workMode }}</el-tag>
                   </div>
                 </td>
               </tr>
@@ -174,7 +174,7 @@
           <template #header>
             <div class="card-header">
               <span>设备数据</span>
-              <el-button-group class="ml-4">
+              <el-button-group v-if="false" class="ml-4">
                 <el-popconfirm title="确定打开波形?" @confirm="sendCmdHex('3A0154')">
                   <template #reference>
                     <el-button type="primary" icon="Open" class="button" size="small">打开波形</el-button>
@@ -197,22 +197,25 @@
                     <el-button type="primary" icon="Open" class="button" size="small">启动PPP</el-button>
                   </template>
                 </el-popconfirm>
-                <el-button type="success" class="button" icon="Refresh" @click="syncDeviceData" :loading="loading" size="small">
+                <el-button type="success" class="button" icon="Refresh" @click="syncDeviceData" :loading="loading"
+                           size="small">
                   数据同步
                 </el-button>
                 <el-button v-if="false" type="info" class="button" icon="Setting" size="small">
                   更多设置
                 </el-button>
               </el-button-group>
-              <el-dropdown v-if="false" split-button type="primary" @click="syncDeviceData" :loading="loading" trigger="click" size="small">
-                数据同步
+              <el-dropdown split-button type="primary" @click="sendCmdHex('3A0154')" trigger="click" size="small"
+                           icon="Open">
+                打开波形
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item icon="Open" @click="sendCmdHex('3A01A4')">启动PPP</el-dropdown-item>
-                    <el-dropdown-item icon="TurnOff" @click="sendCmdHex('3A01A5')">停止PPP</el-dropdown-item>
-                    <el-dropdown-item icon="Open" divided @click="sendCmdHex('3A0154')">打开波形</el-dropdown-item>
                     <el-dropdown-item icon="SwitchButton" @click="sendCmdHex('3A0155')">关闭波形</el-dropdown-item>
-                    <el-dropdown-item icon="Setting" divided>更多配置</el-dropdown-item>
+                    <el-dropdown-item icon="Open" @click="sendCmdHex('3A0154')">打开波形</el-dropdown-item>
+                    <el-dropdown-item icon="Open" divided @click="sendCmdControlEvt(1)">开机</el-dropdown-item>
+                    <el-dropdown-item icon="SwitchButton" @click="sendCmdControlEvt(2)">关机</el-dropdown-item>
+                    <el-dropdown-item icon="Search" @click="sendCmdControlEvt(3)">查询</el-dropdown-item>
+                    <el-dropdown-item icon="Setting" divided @click="showConfig=true">更多配置</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -342,13 +345,49 @@
         </el-card>
       </el-col>
     </el-row>
+    <!-- 4G设备时间配置 -->
+    <el-dialog title="设备时间配置" v-model="showConfig" width="450px" append-to-body @closed="cancel">
+      <el-form ref="deviceConfigRef" :model="deviceConfig" :rules="rules" label-width="100px">
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="持续时间" prop="wakeTimeDur">
+              <el-input type="number" v-model="deviceConfig.wakeTimeDur" maxlength="30" placeholder="请输入持续时间"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="唤醒时间" prop="wakeTimeGap">
+              <el-select v-model="deviceConfig.wakeTimeGap" placeholder="请选择封包间隔时间" style="width: 100%">
+                <el-option v-for="val in 23" :key="val" :label="`${val}分钟`" :value="val"/>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="sendCmdConfigEvt">确 定</el-button>
+          <el-button @click="showConfig=false">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup name="DeviceDetail">
 import {getCurrentInstance, reactive, ref, toRefs} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import {getEquipment, getEquipmentWaveform, returnEquipment, secondedEquipment, send5gCommandHex, syncEquipmentData} from "@/api/seismograph/equipment";
+import {
+  getEquipment,
+  getEquipmentWaveform,
+  returnEquipment,
+  secondedEquipment,
+  send5gCommandHex,
+  sendCmdConfig,
+  sendCmdControl,
+  syncEquipmentData
+} from "@/api/seismograph/equipment";
 import useUserStore from "@/store/modules/user";
 import {listEnterprise} from "@/api/seismograph/enterprise";
 import * as echarts from "echarts";
@@ -365,11 +404,14 @@ const open = ref(false);
 const {proxy} = getCurrentInstance();
 const chartRef = ref(null);
 
+const showConfig = ref(false);
+
 const data = reactive({
   enterpriseList: [],
   device: {},
   payload: {},
   form: {},
+  deviceConfig: {},
   rules: {
     equipmentIdentity: [
       {required: true, message: "设备id不能为空", trigger: "blur"}
@@ -379,11 +421,17 @@ const data = reactive({
     ],
     returnTime: [
       {required: true, message: "归还时间不能为空", trigger: "blur"}
+    ],
+    wakeTimeDur: [
+      {required: true, message: "请输入持续时间", trigger: "blur"}
+    ],
+    wakeTimeGap: [
+      {required: true, message: "请选择唤醒时间", trigger: "change"}
     ]
   }
 });
 
-const {device, form, rules, enterpriseList, payload} = toRefs(data);
+const {device, form, rules, enterpriseList, payload, deviceConfig} = toRefs(data);
 
 function getList() {
   proxy.$modal.loading("正在加载设备数据，请稍候！");
@@ -464,6 +512,42 @@ const sendCmdHex = (hex) => {
     }
   })
 }
+
+const sendCmdControlEvt = (type) => {
+  // loading.value = true;
+  sendCmdControl(id, type).then(response => {
+    if (response.code === 200) {
+      proxy.$modal.msgSuccess("指令已发送");
+    } else {
+      proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
+    }
+  })
+}
+
+const sendCmdConfigEvt = () => {
+  proxy.$refs["deviceConfigRef"].validate(valid => {
+    if (!valid) return;
+    sendCmdConfig(id, deviceConfig.value).then(response => {
+      if (response.code === 200) {
+        proxy.$modal.msgSuccess("指令已发送");
+        showConfig.value = false;
+      } else {
+        proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
+      }
+    })
+  });
+
+}
+
+const cancel = () => {
+  // showConfig.value = false;
+  deviceConfig.value = {
+    wakeTimeDur: null,
+    wakeTimeGap: null
+  };
+  proxy.resetForm("deviceConfigRef");
+}
+
 const loadChartData = () => {
   getEquipmentWaveform(id).then(response => {
     chartInstance.hideLoading();
