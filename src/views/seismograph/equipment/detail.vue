@@ -585,7 +585,7 @@ const loadChartData = () => {
         }
       ]
     })
-    setTimeout(loadChartData, 200)
+    !stop.value && setTimeout(loadChartData, 200)
   })
 }
 let chartInstance = null;
@@ -652,6 +652,10 @@ onMounted(() => {
   })
   chartInstance.showLoading();
   setTimeout(loadChartData, 500)
+})
+const stop = ref(false)
+onBeforeUnmount(() => {
+  stop.value = true;
 })
 getList();
 </script>
