@@ -2,7 +2,7 @@
    <div class="app-container">
       <el-row :gutter="20">
          <!--部门数据-->
-         <el-col :span="4" :xs="24" v-hasRole="['admin']">
+         <el-col :span="4" :xs="24">
             <div class="head-container">
                <el-input
                   v-model="deptName"
@@ -27,8 +27,19 @@
             </div>
          </el-col>
          <!--用户数据-->
-         <el-col :span="$auth.hasRole('admin')?20:24" :xs="24">
+         <el-col :span="20" :xs="24">
             <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+               <el-form-item v-if="!(userStore.enterprise?.enterpriseId > 0)" label="所属企业" prop="enterpriseId">
+                   <el-select v-model="queryParams.enterpriseId" placeholder="请选择" filterable style="width: 100%" @change="changeEnterprise" clearable>
+                     <el-option
+                         v-for="item in enterpriseOptions"
+                         :key="item.enterpriseId"
+                         :label="item.name"
+                         :value="item.enterpriseId"
+                         :disabled="item.status == '1'"
+                     ></el-option>
+                   </el-select>
+               </el-form-item>
                <el-form-item label="用户名称" prop="userName">
                   <el-input
                      v-model="queryParams.userName"
@@ -209,8 +220,18 @@
                   </el-form-item>
                </el-col>
                <el-col :span="12">
-                  <el-form-item label="邮箱" prop="email">
-                     <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
+                  <el-form-item label="角色" prop="roleIds">
+                     <el-select v-model="form.roleIds" multiple placeholder="请选择">
+                       <template v-for="item in roleOptions">
+                        <el-option
+                           v-if="$auth.hasRole('admin') || item.roleKey != 'manager'"
+                           :key="item.roleId"
+                           :label="item.roleName"
+                           :value="item.roleId"
+                           :disabled="item.status == 1"
+                        ></el-option>
+                         </template>
+                     </el-select>
                   </el-form-item>
                </el-col>
             </el-row>
@@ -251,7 +272,7 @@
                   </el-form-item>
                </el-col>
             </el-row>
-            <el-row>
+            <el-row v-if="!(userStore.enterprise?.enterpriseId > 0)">
                <el-col :span="12">
                   <el-form-item label="岗位">
                      <el-select v-model="form.postIds" multiple placeholder="请选择">
@@ -266,16 +287,8 @@
                   </el-form-item>
                </el-col>
                <el-col :span="12">
-                  <el-form-item label="角色" prop="roleIds">
-                     <el-select v-model="form.roleIds" multiple placeholder="请选择">
-                        <el-option
-                           v-for="item in roleOptions"
-                           :key="item.roleId"
-                           :label="item.roleName"
-                           :value="item.roleId"
-                           :disabled="item.status == 1"
-                        ></el-option>
-                     </el-select>
+                  <el-form-item label="邮箱" prop="email">
+                     <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
                   </el-form-item>
                </el-col>
             </el-row>
@@ -347,8 +360,8 @@
 </template>
 
 <script setup name="User">
-import { getToken } from "@/utils/auth";
-import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user";
+import {getToken} from "@/utils/auth";
+import {addUser, changeUserStatus, delUser, deptTreeSelect, getUser, listUser, resetUserPwd, updateUser} from "@/api/system/user";
 import useUserStore from "@/store/modules/user";
 
 const userStore = useUserStore()
@@ -411,15 +424,15 @@ const data = reactive({
     phonenumber: undefined,
     status: undefined,
     deptId: undefined,
-    enterpriseId: undefined
+    enterpriseId: userStore.enterprise?.enterpriseId || undefined
   },
   rules: {
     userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
     nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
     password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }],
     email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
-    deptId: proxy.$auth.hasRole('admin')?undefined:[{ required: true, message: "请选择部门", trigger: "change" }],
-    roleIds: proxy.$auth.hasRole('admin')?undefined:[{ type: "array", required: true, message: "请选择角色", trigger: "change", len: 1 }],
+    deptId: [{ required: true, message: "请选择部门", trigger: "change" }],
+    roleIds: [{ type: "array", required: true, message: "请选择角色", trigger: "change"}],
     phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
   }
 });
@@ -435,20 +448,27 @@ const filterNode = (value, data) => {
 watch(deptName, val => {
   proxy.$refs["deptTreeRef"].filter(val);
 });
+
+function changeEnterprise(){
+  getDeptTree()
+  handleQuery()
+}
+
 /** 查询部门下拉树结构 */
-function getDeptTree() {
-  deptTreeSelect().then(response => {
-    const treeData = response.data || [];
-    if(treeData[0]){
-      treeData[0].disabled = true;
+function getDeptTree(init=false) {
+  deptTreeSelect(queryParams.value.enterpriseId || 0).then(response => {
+    if(init){
+      enterpriseOptions.value = response.enterprises || [];
     }
-    deptOptions.value = treeData;
+    deptOptions.value = response.data || [];
   });
 };
 /** 查询用户列表 */
 function getList() {
   loading.value = true;
-  listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+  const params = {...queryParams.value}
+  if(!params.enterpriseId) params.enterpriseId = 0
+  listUser(proxy.addDateRange(params, dateRange.value)).then(res => {
     loading.value = false;
     userList.value = res.rows;
     total.value = res.total;
@@ -568,7 +588,7 @@ function reset() {
   form.value = {
     userId: undefined,
     deptId: undefined,
-    enterpriseId: userStore.enterprise?.enterpriseId || undefined,
+    enterpriseId: queryParams.value.enterpriseId,
     userName: undefined,
     nickName: undefined,
     password: undefined,
@@ -593,7 +613,7 @@ function handleAdd() {
   getUser().then(response => {
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
-    enterpriseOptions.value = response.enterprises;
+    // enterpriseOptions.value = response.enterprises;
     open.value = true;
     title.value = "添加用户";
     form.value.password = initPassword.value;
@@ -607,7 +627,7 @@ function handleUpdate(row) {
     form.value = response.data;
     postOptions.value = response.posts;
     roleOptions.value = response.roles;
-    enterpriseOptions.value = response.enterprises;
+    // enterpriseOptions.value = response.enterprises;
     form.value.postIds = response.postIds;
     form.value.roleIds = response.roleIds;
     open.value = true;
@@ -636,6 +656,6 @@ function submitForm() {
   });
 };
 
-getDeptTree();
+getDeptTree(true);
 getList();
 </script>
