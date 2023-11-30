@@ -351,14 +351,16 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="持续时间" prop="wakeTimeDur">
-              <el-input type="number" v-model="deviceConfig.wakeTimeDur" maxlength="30" placeholder="请输入持续时间"/>
+              <el-input type="number" v-model="deviceConfig.wakeTimeDur" maxlength="30" placeholder="请输入持续时间">
+                <template #append>秒</template>
+              </el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
             <el-form-item label="唤醒时间" prop="wakeTimeGap">
-              <el-select v-model="deviceConfig.wakeTimeGap" placeholder="请选择封包间隔时间" style="width: 100%">
+              <el-select v-model="deviceConfig.wakeTimeGap" placeholder="请选择唤醒时间" style="width: 100%">
                 <el-option v-for="val in 23" :key="val" :label="`${val}分钟`" :value="val"/>
               </el-select>
             </el-form-item>
