@@ -361,7 +361,7 @@
           <el-col :span="24">
             <el-form-item label="唤醒时间" prop="wakeTimeGap">
               <el-select v-model="deviceConfig.wakeTimeGap" placeholder="请选择唤醒时间" style="width: 100%">
-                <el-option v-for="val in 23" :key="val" :label="`${val}分钟`" :value="val"/>
+                <el-option v-for="val in 60" :key="val" :label="`${val}分钟`" :value="val"/>
               </el-select>
             </el-form-item>
           </el-col>
