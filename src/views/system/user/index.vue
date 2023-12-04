@@ -193,6 +193,21 @@
       <!-- 添加或修改用户配置对话框 -->
       <el-dialog :title="title" v-model="open" width="600px" append-to-body>
          <el-form :model="form" :rules="rules" ref="userRef" label-width="80px">
+           <el-row v-if="!(userStore.enterprise?.enterpriseId)">
+             <el-col :span="24">
+               <el-form-item label="所属企业">
+                 <el-select v-model="form.enterpriseId" placeholder="管理员" disabled style="width: 100%">
+                   <el-option
+                       v-for="item in enterpriseOptions"
+                       :key="item.enterpriseId"
+                       :label="item.name"
+                       :value="item.enterpriseId"
+                       :disabled="item.status == '1'"
+                   ></el-option>
+                 </el-select>
+               </el-form-item>
+             </el-col>
+           </el-row>
             <el-row>
                <el-col :span="12">
                   <el-form-item label="用户昵称" prop="nickName">
@@ -209,6 +224,7 @@
                         placeholder="请选择归属部门"
                         :default-expanded-keys="[100]"
                         check-strictly
+                        default-expand-all
                      />
                   </el-form-item>
                </el-col>
@@ -290,21 +306,6 @@
                   <el-form-item label="邮箱" prop="email">
                      <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
                   </el-form-item>
-               </el-col>
-            </el-row>
-            <el-row v-if="!(userStore.enterprise?.enterpriseId)">
-               <el-col :span="24">
-                 <el-form-item label="所属企业">
-                   <el-select v-model="form.enterpriseId" placeholder="请选择" filterable style="width: 100%">
-                     <el-option
-                         v-for="item in enterpriseOptions"
-                         :key="item.enterpriseId"
-                         :label="item.name"
-                         :value="item.enterpriseId"
-                         :disabled="item.status == '1'"
-                     ></el-option>
-                   </el-select>
-                 </el-form-item>
                </el-col>
             </el-row>
             <el-row>
