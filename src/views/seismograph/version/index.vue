@@ -127,6 +127,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="下载地址" prop="uri">
+          <file-upload v-if="form.type === '1'" v-model="form.uri" file-size="200" :file-type="['apk']"/>
+          <el-input v-else v-model="form.uri" placeholder="请输入下载地址" maxlength="200" show-word-limit/>
+        </el-form-item>
         <el-form-item label="强制更新" prop="enforce">
           <el-select v-model="form.enforce" placeholder="请选择强制更新" style="width: 100%">
             <el-option
@@ -136,9 +140,6 @@
                 :value="dict.value"
             ></el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item label="下载地址" prop="uri">
-          <el-input v-model="form.uri" placeholder="请输入下载地址" maxlength="200" show-word-limit/>
         </el-form-item>
         <el-form-item label="版本日志" prop="log">
           <el-input v-model="form.log" type="textarea" placeholder="请输入内容" maxlength="200" show-word-limit/>
