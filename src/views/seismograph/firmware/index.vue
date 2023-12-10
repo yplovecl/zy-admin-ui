@@ -84,7 +84,11 @@
         </template>
       </el-table-column>
       <el-table-column label="版本号" align="center" prop="version" width="120"/>
-      <el-table-column label="升级包" align="center" prop="filePath" />
+      <el-table-column label="升级包" align="center" prop="filePath">
+        <template #default="scope">
+          <el-link :href="scope.row.filePath" target="_blank">点击下载</el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="文件Hash" align="center" prop="fileHash" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">

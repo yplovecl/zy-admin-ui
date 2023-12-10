@@ -43,7 +43,8 @@
             icon="Plus"
             @click="handleAdd"
             v-hasPermi="['seismograph:version:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -53,7 +54,8 @@
             :disabled="single"
             @click="handleUpdate"
             v-hasPermi="['seismograph:version:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -63,7 +65,8 @@
             :disabled="multiple"
             @click="handleDelete"
             v-hasPermi="['seismograph:version:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -72,17 +75,22 @@
             icon="Download"
             @click="handleExport"
             v-hasPermi="['seismograph:version:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="versionList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column type="selection" width="55" align="center"/>
       <el-table-column label="ID" align="center" prop="versionId" width="80"/>
       <el-table-column label="版本号" align="center" prop="no" width="100"/>
-      <el-table-column label="版本日志" align="center" prop="log" />
-      <el-table-column label="下载地址" align="center" prop="uri" />
+      <el-table-column label="版本日志" align="center" prop="log"/>
+      <el-table-column label="下载地址" align="center" prop="uri">
+        <template #default="scope">
+          <el-link :href="scope.row.uri" target="_blank">点击查看</el-link>
+        </template>
+      </el-table-column>
       <el-table-column label="类别" align="center" prop="type" width="80">
         <template #default="scope">
           <dict-tag :options="app_system" :value="scope.row.type"/>
@@ -156,10 +164,10 @@
 </template>
 
 <script setup name="Version">
-import { listVersion, getVersion, delVersion, addVersion, updateVersion } from "@/api/seismograph/version";
+import {addVersion, delVersion, getVersion, listVersion, updateVersion} from "@/api/seismograph/version";
 
-const { proxy } = getCurrentInstance();
-const { app_system, sys_yes_no } = proxy.useDict('app_system', 'sys_yes_no');
+const {proxy} = getCurrentInstance();
+const {app_system, sys_yes_no} = proxy.useDict('app_system', 'sys_yes_no');
 
 const versionList = ref([]);
 const open = ref(false);
@@ -182,24 +190,24 @@ const data = reactive({
   },
   rules: {
     no: [
-      { required: true, message: "版本号不能为空", trigger: "blur" }
+      {required: true, message: "版本号不能为空", trigger: "blur"}
     ],
     log: [
-      { required: true, message: "版本日志不能为空", trigger: "blur" }
+      {required: true, message: "版本日志不能为空", trigger: "blur"}
     ],
     uri: [
-      { required: true, message: "下载地址不能为空", trigger: "blur" }
+      {required: true, message: "下载地址不能为空", trigger: "blur"}
     ],
     type: [
-      { required: true, message: "类别不能为空", trigger: "change" }
+      {required: true, message: "类别不能为空", trigger: "change"}
     ],
     enforce: [
-      { required: true, message: "强制更新不能为空", trigger: "change" }
+      {required: true, message: "强制更新不能为空", trigger: "change"}
     ],
   }
 });
 
-const { queryParams, form, rules } = toRefs(data);
+const {queryParams, form, rules} = toRefs(data);
 
 /** 查询APP版本信息列表 */
 function getList() {
@@ -293,12 +301,13 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _versionIds = row.versionId || ids.value;
-  proxy.$modal.confirm('是否确认删除APP版本信息编号为"' + _versionIds + '"的数据项？').then(function() {
+  proxy.$modal.confirm('是否确认删除APP版本信息编号为"' + _versionIds + '"的数据项？').then(function () {
     return delVersion(_versionIds);
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
-  }).catch(() => {});
+  }).catch(() => {
+  });
 }
 
 /** 导出按钮操作 */
