@@ -14,7 +14,7 @@
                            @click="handleSeconded()"
                            v-hasPermi="['seismograph:equipment:seconded']">借调</el-button>
                 </template>
-                <el-button type="default" class="button" @click="router.back()">返回</el-button>
+                <el-button class="button" @click="router.back()">返回</el-button>
               </span>
             </div>
           </template>
@@ -51,7 +51,7 @@
                 <td class="el-table__cell is-leaf">
                   <div class="cell">
                     <el-tag v-if="device.workMode === 'spacing'" type="success" size="default">间隔上传</el-tag>
-                    <el-tag v-else-if="device.workMode === 'continuous'" type="primary" size="default">连续上传</el-tag>
+                    <el-tag v-else-if="device.workMode === 'continuous'" size="default">连续上传</el-tag>
                     <el-tag v-else type="danger" size="default">未知{{ device.workMode }}</el-tag>
                   </div>
                 </td>
@@ -439,7 +439,7 @@ function getList() {
   proxy.$modal.loading("正在加载设备数据，请稍候！");
   getEquipment(id).then(response => {
     // proxy.$modal.closeLoading();
-    device.value = response.data;
+    device.value = response.data || {};
     payload.value = response.data?.payload || {};
   }).finally(proxy.$modal.closeLoading)
 }
@@ -615,6 +615,12 @@ onMounted(() => {
     },
     yAxis: {
       type: "value",
+      min: function (val) {
+        return Math.max(Math.abs(val.min || 0), Math.abs(val.max || 0)) * -1
+      },
+      max: function (val) {
+        return Math.max(Math.abs(val.min || 0), Math.abs(val.max || 0))
+      }
     },
     dataZoom: [
       {

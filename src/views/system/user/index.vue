@@ -2,7 +2,7 @@
    <div class="app-container">
       <el-row :gutter="20">
          <!--部门数据-->
-         <el-col :span="4" :xs="24">
+         <el-col :span="4" :xs="24" v-hasRole="['admin', 'enterprise']">
             <div class="head-container">
                <el-input
                   v-model="deptName"
@@ -27,19 +27,8 @@
             </div>
          </el-col>
          <!--用户数据-->
-         <el-col :span="20" :xs="24">
+         <el-col :span="$auth.hasRole('enterprise')?20:24" :xs="24">
             <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-               <el-form-item v-if="!(userStore.enterprise?.enterpriseId > 0)" label="所属企业" prop="enterpriseId">
-                   <el-select v-model="queryParams.enterpriseId" placeholder="请选择" filterable style="width: 100%" @change="changeEnterprise" clearable>
-                     <el-option
-                         v-for="item in enterpriseOptions"
-                         :key="item.enterpriseId"
-                         :label="item.name"
-                         :value="item.enterpriseId"
-                         :disabled="item.status == '1'"
-                     ></el-option>
-                   </el-select>
-               </el-form-item>
                <el-form-item label="用户名称" prop="userName">
                   <el-input
                      v-model="queryParams.userName"
@@ -196,7 +185,7 @@
            <el-row v-if="!(userStore.enterprise?.enterpriseId)">
              <el-col :span="24">
                <el-form-item label="所属企业">
-                 <el-select v-model="form.enterpriseId" placeholder="管理员" disabled style="width: 100%">
+                 <el-select v-model="form.enterpriseId" placeholder="管理员" style="width: 100%" @change="changeEnterprise" clearable>
                    <el-option
                        v-for="item in enterpriseOptions"
                        :key="item.enterpriseId"
@@ -425,7 +414,6 @@ const data = reactive({
     phonenumber: undefined,
     status: undefined,
     deptId: undefined,
-    enterpriseId: userStore.enterprise?.enterpriseId || undefined
   },
   rules: {
     userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
@@ -452,15 +440,16 @@ watch(deptName, val => {
 
 function changeEnterprise(){
   getDeptTree()
-  handleQuery()
+  // handleQuery()
 }
 
 /** 查询部门下拉树结构 */
 function getDeptTree(init=false) {
-  deptTreeSelect(queryParams.value.enterpriseId || 0).then(response => {
+  deptTreeSelect(form.value.enterpriseId || 0).then(response => {
     if(init){
       enterpriseOptions.value = response.enterprises || [];
     }
+    form.value.deptId = undefined;
     deptOptions.value = response.data || [];
   });
 };
