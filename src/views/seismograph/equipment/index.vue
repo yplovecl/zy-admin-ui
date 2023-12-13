@@ -396,8 +396,8 @@
         <el-form-item label="设备编号模板" prop="packetTime">
           <el-select v-model="form.packetTime" placeholder="请选择设备编号模板" style="width: 100%">
             <el-option label="BLA-3C-5G-S10-XXXXXX" value="BLA-3C-5G-S10-XXXXXX"/>
-            <el-option label="CDS-E20-XXXXXX" value="CDS-E20-XXXXXX"/>
             <el-option label="BLA-S-XXXXXX-5G1" value="BLA-S-XXXXXX-5G1"/>
+            <el-option label="CDS-E20-XXXXXX" value="CDS-E20-XXXXXX"/>
             <el-option label="ceshiXXXXXX" value="ceshiXXXXXX"/>
           </el-select>
         </el-form-item>
