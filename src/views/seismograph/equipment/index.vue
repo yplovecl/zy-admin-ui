@@ -127,6 +127,16 @@
         >导出
         </el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+            type="primary"
+            plain
+            icon="Plus"
+            @click="handleBatchAdd"
+            v-hasPermi="['seismograph:equipment:add']"
+        >批量添加
+        </el-button>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -348,6 +358,62 @@
       </template>
     </el-dialog>
 
+    <!-- 批量添加 -->
+    <el-dialog title="批量添加设备" v-model="open1" width="500px" append-to-body>
+      <el-form ref="batchAddRef" :model="form" :rules="rules" label-width="120px">
+        <el-form-item label="所属企业" prop="enterpriseId">
+          <el-select v-model="form.enterpriseId" placeholder="请选择企业" style="width: 100%">
+            <el-option
+                v-for="item in enterpriseList"
+                :key="item.enterpriseId"
+                :label="item.name"
+                :value="item.enterpriseId"
+                :disabled="item.status === '1'"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="带有5G" prop="have5g">
+          <el-select v-model="form.have5g" placeholder="是否带有5G" style="width: 100%">
+            <el-option key="Y" label="是" value="Y"/>
+            <el-option key="N" label="否" value="N"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="封包间隔" prop="packetTime">
+          <el-select v-model="form.packetTime" placeholder="请选择封包间隔时间" style="width: 100%">
+            <el-option v-for="val in 30" :key="val" :label="`${val}分钟`" :value="val"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="工作模式" prop="workMode">
+          <el-select v-model="form.workMode" placeholder="请选择波形上传模式" style="width: 100%">
+            <el-option
+                v-for="dict in device_work_mode"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="设备编号模板" prop="packetTime">
+          <el-select v-model="form.packetTime" placeholder="请选择设备编号模板" style="width: 100%">
+            <el-option label="BLA-3C-5G-S10-XXXXXX" value="BLA-3C-5G-S10-XXXXXX"/>
+            <el-option label="CDS-E20-XXXXXX" value="CDS-E20-XXXXXX"/>
+            <el-option label="BLA-S-XXXXXX-5G1" value="BLA-S-XXXXXX-5G1"/>
+            <el-option label="ceshiXXXXXX" value="ceshiXXXXXX"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="编号范围" prop="packetTime">
+            <el-input-number v-model="form.equipmentIdentity" min="0" max="999999" placeholder="起始编号" style="width: 140px; margin-right: 20px;" controls-position="right"/> ~
+            <el-input-number v-model="form.equipmentIdentity" min="0" max="999999" placeholder="结束编号" style="width: 140px;margin-left: 20px;" controls-position="right"/>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button type="primary" @click="submitForm">确 定</el-button>
+          <el-button @click="cancel">取 消</el-button>
+        </div>
+      </template>
+    </el-dialog>
+
     <!-- WR平台⻚⾯配置对话框 -->
     <el-dialog title="WR平台配置" v-model="showConfig" class="wr-config" width="500px" append-to-body>
       <el-tabs v-model="tabName" class="config-tabs">
@@ -375,6 +441,7 @@ const enterpriseList = ref([]);
 const equipmentList = ref([]);
 const showConfig = ref(false);
 const open = ref(false);
+const open1 = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]);
@@ -494,6 +561,11 @@ function handleAdd() {
   reset();
   open.value = true;
   title.value = "添加设备";
+}
+
+function handleBatchAdd() {
+  reset();
+  open1.value = true;
 }
 
 /** 修改按钮操作 */
