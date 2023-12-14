@@ -108,3 +108,11 @@ export function sendCmdConfig(equipmentId, data) {
         data: data
     })
 }
+
+export function batchAddEquipment(data) {
+    return request({
+        url: '/seismograph/equipment/batchAdd',
+        method: 'post',
+        data: data
+    })
+}

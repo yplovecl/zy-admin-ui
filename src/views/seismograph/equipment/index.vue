@@ -360,9 +360,9 @@
 
     <!-- 批量添加 -->
     <el-dialog title="批量添加设备" v-model="open1" width="500px" append-to-body>
-      <el-form ref="batchAddRef" :model="form" :rules="rules" label-width="120px">
+      <el-form ref="batchAddRef" :model="batchAddForm" :rules="rules" label-width="120px">
         <el-form-item label="所属企业" prop="enterpriseId">
-          <el-select v-model="form.enterpriseId" placeholder="请选择企业" style="width: 100%">
+          <el-select v-model="batchAddForm.enterpriseId" placeholder="请选择企业" style="width: 100%">
             <el-option
                 v-for="item in enterpriseList"
                 :key="item.enterpriseId"
@@ -373,18 +373,18 @@
           </el-select>
         </el-form-item>
         <el-form-item label="带有5G" prop="have5g">
-          <el-select v-model="form.have5g" placeholder="是否带有5G" style="width: 100%">
+          <el-select v-model="batchAddForm.have5g" placeholder="是否带有5G" style="width: 100%">
             <el-option key="Y" label="是" value="Y"/>
             <el-option key="N" label="否" value="N"/>
           </el-select>
         </el-form-item>
         <el-form-item label="封包间隔" prop="packetTime">
-          <el-select v-model="form.packetTime" placeholder="请选择封包间隔时间" style="width: 100%">
+          <el-select v-model="batchAddForm.packetTime" placeholder="请选择封包间隔时间" style="width: 100%">
             <el-option v-for="val in 30" :key="val" :label="`${val}分钟`" :value="val"/>
           </el-select>
         </el-form-item>
         <el-form-item label="工作模式" prop="workMode">
-          <el-select v-model="form.workMode" placeholder="请选择波形上传模式" style="width: 100%">
+          <el-select v-model="batchAddForm.workMode" placeholder="请选择波形上传模式" style="width: 100%">
             <el-option
                 v-for="dict in device_work_mode"
                 :key="dict.value"
@@ -393,23 +393,31 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="设备编号模板" prop="packetTime">
-          <el-select v-model="form.packetTime" placeholder="请选择设备编号模板" style="width: 100%">
-            <el-option label="BLA-3C-5G-S10-XXXXXX" value="BLA-3C-5G-S10-XXXXXX"/>
-            <el-option label="BLA-S-XXXXXX-5G1" value="BLA-S-XXXXXX-5G1"/>
-            <el-option label="CDS-E20-XXXXXX" value="CDS-E20-XXXXXX"/>
-            <el-option label="ceshiXXXXXX" value="ceshiXXXXXX"/>
+        <el-form-item label="设备编号模板" prop="idTpl">
+          <el-select v-model="batchAddForm.idTpl" placeholder="请选择设备编号模板" style="width: 100%">
+            <el-option key="BLA-3C-5G-S10-XXXXXX" label="BLA-3C-5G-S10-XXXXXX" value="BLA-3C-5G-S10-XXXXXX"/>
+            <el-option key="BLA-S-XXXXXX-5G1" label="BLA-S-XXXXXX-5G1" value="BLA-S-XXXXXX-5G1"/>
+            <el-option key="CDS-E20-XXXXXX" label="CDS-E20-XXXXXX" value="CDS-E20-XXXXXX"/>
+            <el-option key="ceshiXXXXXX" label="ceshiXXXXXX" value="ceshiXXXXXX"/>
           </el-select>
         </el-form-item>
-        <el-form-item label="编号范围" prop="packetTime">
-            <el-input-number v-model="form.equipmentIdentity" min="0" max="999999" placeholder="起始编号" style="width: 140px; margin-right: 20px;" controls-position="right"/> ~
-            <el-input-number v-model="form.equipmentIdentity" min="0" max="999999" placeholder="结束编号" style="width: 140px;margin-left: 20px;" controls-position="right"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="编号范围" prop="start">
+              <el-input-number v-model.number="batchAddForm.start" min="0" max="999998" placeholder="起始" controls-position="right"/>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item prop="end">
+              <el-input-number v-model.number="batchAddForm.end" min="1" max="999999" placeholder="结束" controls-position="right"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
+          <el-button type="primary" @click="submitBatchForm">确 定</el-button>
+          <el-button @click="open1=false">取 消</el-button>
         </div>
       </template>
     </el-dialog>
@@ -429,7 +437,7 @@
 <script setup name="Equipment">
 import {getCurrentInstance, reactive, ref} from 'vue'
 import {listEnterprise} from "@/api/seismograph/enterprise";
-import {addEquipment, delEquipment, getEquipment, listEquipment, updateEquipment} from "@/api/seismograph/equipment";
+import {addEquipment, batchAddEquipment, delEquipment, getEquipment, listEquipment, updateEquipment} from "@/api/seismograph/equipment";
 import useUserStore from "@/store/modules/user";
 
 const {proxy} = getCurrentInstance();
@@ -453,6 +461,7 @@ const tabName = ref("wifi");
 
 const data = reactive({
   form: {},
+  batchAddForm: {},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -484,10 +493,21 @@ const data = reactive({
     workMode: [
       {required: true, message: "请选择工作模式", trigger: "change"}
     ],
+    idTpl: [
+      {required: true, message: "请选设备编号模板", trigger: "change"}
+    ],
+    // start: [
+    //   {required: true, message: "设备编号不能为空"},
+    //   {type: "integer", message: "请输入整数"},
+    //   {max: 999998, message: "不能超过999998"},
+    //   {min: 10, message: "不能小于0"}
+    // ],
+    start: {type: "integer", min: 0, max: 999998, message: "0 - 999998之间", required: true, trigger: "blur"},
+    end: {type: "integer", min: 1, max: 999999, message: "1 - 999999之间", required: true, trigger: "blur"}
   }
 });
 
-const {queryParams, form, rules} = toRefs(data);
+const {queryParams, form, rules, batchAddForm} = toRefs(data);
 
 /** 查询设备列表 */
 function getList() {
@@ -537,6 +557,19 @@ function reset() {
   proxy.resetForm("equipmentRef");
 }
 
+function resetBatchAddForm() {
+  batchAddForm.value = {
+    idTpl: null,
+    enterpriseId: null,
+    have5g: 'Y',
+    packetTime: 5,
+    workMode: 'continuous',
+    start: null,
+    end: null,
+  };
+  proxy.resetForm("batchAddRef");
+}
+
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1;
@@ -564,7 +597,7 @@ function handleAdd() {
 }
 
 function handleBatchAdd() {
-  reset();
+  resetBatchAddForm();
   open1.value = true;
 }
 
@@ -597,6 +630,22 @@ function submitForm() {
         });
       }
     }
+  });
+}
+
+function submitBatchForm() {
+  proxy.$refs["batchAddRef"].validate(valid => {
+    if (!valid) return;
+    if (batchAddForm.value.start >= batchAddForm.value.end) return proxy.$modal.msgError("编号范围有误：结束位置必须大于起始位置");
+    batchAddEquipment(batchAddForm.value).then(response => {
+      if (response.code === 200) {
+        proxy.$modal.msgSuccess(response.msg || "新增成功");
+      } else {
+        proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
+      }
+      open1.value = false;
+      getList();
+    });
   });
 }
 
