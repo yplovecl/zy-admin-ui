@@ -100,6 +100,13 @@ export function sendCmdControl(equipmentId, type) {
     })
 }
 
+export function getDeviceSamplingRate(equipmentId) {
+    return request({
+        url: '/seismograph/equipment/getDeviceSamplingRate/' + equipmentId,
+        method: 'get'
+    })
+}
+
 
 export function sendCmdConfig(equipmentId, data) {
     return request({

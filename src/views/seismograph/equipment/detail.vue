@@ -215,6 +215,7 @@
                     <el-dropdown-item icon="Open" divided @click="sendCmdControlEvt(1)">开机</el-dropdown-item>
                     <el-dropdown-item icon="SwitchButton" @click="sendCmdControlEvt(2)">关机</el-dropdown-item>
                     <el-dropdown-item icon="Search" @click="sendCmdControlEvt(3)">查询</el-dropdown-item>
+                    <el-dropdown-item icon="Search" divided @click="queryDeviceSamplingRate()">获取采样率</el-dropdown-item>
                     <el-dropdown-item icon="Setting" divided @click="showConfig=true">更多配置</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -381,6 +382,7 @@
 import {getCurrentInstance, reactive, ref, toRefs} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import {
+  getDeviceSamplingRate,
   getEquipment,
   getEquipmentWaveform,
   returnEquipment,
@@ -520,6 +522,16 @@ const sendCmdControlEvt = (type) => {
   sendCmdControl(id, type).then(response => {
     if (response.code === 200) {
       proxy.$modal.msgSuccess("指令已发送");
+    } else {
+      proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
+    }
+  })
+}
+
+const queryDeviceSamplingRate = () => {
+  getDeviceSamplingRate(id).then(response => {
+    if (response.code === 200) {
+      proxy.$modal.msgSuccess(response.msg || "指令已发送");
     } else {
       proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
     }
