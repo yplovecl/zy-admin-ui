@@ -395,6 +395,7 @@ import {
 import useUserStore from "@/store/modules/user";
 import {listEnterprise} from "@/api/seismograph/enterprise";
 import * as echarts from "echarts";
+import {ElLoading} from "element-plus";
 
 const userStore = useUserStore()
 const route = useRoute();
@@ -529,13 +530,11 @@ const sendCmdControlEvt = (type) => {
 }
 
 const queryDeviceSamplingRate = () => {
+  const loadingInstance = ElLoading.service({lock: true, fullscreen: true, text: "获取中，请稍后", background: 'rgba(0, 0, 0, 0.8)'})
   getDeviceSamplingRate(id).then(response => {
-    if (response.code === 200) {
-      proxy.$modal.msgSuccess(response.msg || "指令已发送");
-    } else {
-      proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
-    }
-  })
+    // proxy.$modal.msgSuccess(response.msg || "获取成功");
+    getList()
+  }).finally(loadingInstance.close)
 }
 
 const sendCmdConfigEvt = () => {
