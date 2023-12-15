@@ -499,33 +499,21 @@ const loading = ref(false)
 const syncDeviceData = () => {
   loading.value = true;
   syncEquipmentData(id).then(response => {
-    if (response.code === 200) {
-      proxy.$modal.msgSuccess("已成功发送指令，等待设备上报数据");
-    } else {
-      proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
-    }
+    proxy.$modal.msgSuccess(response.msg || "已成功发送指令，等待设备上报数据");
     // getList()
   }).finally(() => loading.value = false)
 }
 const sendCmdHex = (hex) => {
   // loading.value = true;
   send5gCommandHex(id, {hex}).then(response => {
-    if (response.code === 200) {
-      proxy.$modal.msgSuccess("指令已发送");
-    } else {
-      proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
-    }
+    proxy.$modal.msgSuccess(response.msg || "指令已发送");
   })
 }
 
 const sendCmdControlEvt = (type) => {
   // loading.value = true;
   sendCmdControl(id, type).then(response => {
-    if (response.code === 200) {
-      proxy.$modal.msgSuccess("指令已发送");
-    } else {
-      proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
-    }
+    proxy.$modal.msgSuccess(response.msg || "指令已发送");
   })
 }
 
@@ -541,12 +529,8 @@ const sendCmdConfigEvt = () => {
   proxy.$refs["deviceConfigRef"].validate(valid => {
     if (!valid) return;
     sendCmdConfig(id, deviceConfig.value).then(response => {
-      if (response.code === 200) {
-        proxy.$modal.msgSuccess("指令已发送");
-        showConfig.value = false;
-      } else {
-        proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
-      }
+      showConfig.value = false;
+      proxy.$modal.msgSuccess(response.msg || "指令已发送");
     })
   });
 
@@ -598,7 +582,7 @@ const loadChartData = () => {
         }
       ]
     })
-    !stop.value && setTimeout(loadChartData, 200)
+    !stop.value && setTimeout(loadChartData, 500)
   })
 }
 let chartInstance = null;
