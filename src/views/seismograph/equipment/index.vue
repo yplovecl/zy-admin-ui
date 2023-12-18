@@ -533,12 +533,12 @@
               />
             </el-col>
           </el-row>
-          <el-row class="mt10">
+          <el-row class="mt10" justify="space-between">
             <el-col :span="12">
-              <el-button type="primary" @click="submitWrConfig(3)">保&nbsp;&nbsp;存</el-button>
+              <el-button type="primary" icon="Upload" @click="submitWrConfig(3)">保&nbsp;&nbsp;存</el-button>
             </el-col>
             <el-col :span="12">
-              <el-button type="success" @click="submitBatchForm">导&nbsp;&nbsp;出</el-button>
+              <el-button type="success" text @click="submitBatchForm">导出配置</el-button>
             </el-col>
           </el-row>
         </el-tab-pane>
