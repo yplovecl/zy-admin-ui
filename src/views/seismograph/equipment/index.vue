@@ -425,10 +425,95 @@
     <!-- WR平台⻚⾯配置对话框 -->
     <el-dialog title="WR平台配置" v-model="showConfig" class="wr-config" width="500px" append-to-body>
       <el-tabs v-model="tabName" class="config-tabs">
-        <el-tab-pane label="WIFI配置" name="wifi">WIFI配置</el-tab-pane>
-        <el-tab-pane label="蜂窝网络配置" name="cellular">蜂窝网络配置</el-tab-pane>
+        <el-tab-pane label="WIFI配置" name="wifi">
+          <el-form ref="wifiConfigRef" :model="wifiForm" :rules="rules" label-width="100px" label-position="left">
+            <el-form-item label="天线" prop="ant">
+              <el-radio-group v-model="wifiForm.ant">
+                <el-radio-button :label="0">内置</el-radio-button>
+                <el-radio-button :label="1">外置</el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="模式" prop="mode">
+              <el-radio-group v-model="wifiForm.wifi.mode">
+                <el-radio-button :label="0">AP</el-radio-button>
+                <el-radio-button :label="1">STA</el-radio-button>
+                <el-radio-button :label="2">数据中⼼</el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+            <template v-if="wifiForm.wifi.mode === 0">
+              <el-form-item label="SSID" prop="server">
+                <el-input v-model="wifiForm.wifi.ap.ssid" placeholder="SSID" maxlength="64" show-word-limit/>
+              </el-form-item>
+              <el-form-item label="密码" prop="server">
+                <el-input v-model="wifiForm.wifi.ap.key" placeholder="密码" maxlength="64" show-word-limit/>
+              </el-form-item>
+              <el-form-item label="加密方式" prop="server">
+                <el-select v-model="wifiForm.wifi.ap.auth" placeholder="请选择加密方式" style="width: 100%">
+                  <el-option label="OPEN" value="OPEN"/>
+                  <el-option label="WPAPSK" value="WPAPSK"/>
+                  <el-option label="WPA2PSK" value="WPA2PSK"/>
+                  <el-option label="WPAWPA2PSK" value="WPAWPA2PSK"/>
+                </el-select>
+              </el-form-item>
+            </template>
+            <template v-else-if="wifiForm.wifi.mode === 1">
+              <el-form-item label="SSID" prop="server">
+                <el-input v-model="wifiForm.wifi.sta.ssid" placeholder="SSID" maxlength="64" show-word-limit/>
+              </el-form-item>
+              <el-form-item label="密码" prop="server">
+                <el-input v-model="wifiForm.wifi.sta.key" placeholder="密码" maxlength="64" show-word-limit/>
+              </el-form-item>
+            </template>
+            <template v-else>
+              <el-form-item label="节点地址" prop="server">
+                <el-input v-model="wifiForm.wifi.center.address" placeholder="节点地址"/>
+              </el-form-item>
+              <el-form-item label="节点端口" prop="server">
+                <el-input type="number" v-model="wifiForm.wifi.center.port" placeholder="节点端口"/>
+              </el-form-item>
+              <el-form-item label="节点协议" prop="server">
+                <el-radio-group v-model="wifiForm.wifi.center.protocol">
+                  <el-radio label="TCP">TCP</el-radio>
+                  <el-radio label="UDP">UDP</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <el-form-item label="心跳时间" prop="server">
+                <el-input type="number" v-model="wifiForm.wifi.center.keepalive" placeholder="心跳时间"/>
+              </el-form-item>
+            </template>
+
+            <el-form-item label="蓝牙开关" prop="blu">
+              <el-switch v-model="wifiForm.ble.mode" active-text="打开" inactive-text="关闭" :active-value="2" :inactive-value="0"/>
+            </el-form-item>
+            <el-form-item v-if="wifiForm.ble.mode" label="蓝牙名称" prop="server">
+              <el-input v-model="wifiForm.ble.server.name" placeholder="蓝牙名称"/>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
+        <el-tab-pane label="蜂窝网络配置" name="cellular">
+          <el-form ref="cellularConfigRef" :model="cellularForm" :rules="rules" label-width="100px" label-position="left">
+            <el-form-item label="天线" prop="ant">
+              <el-radio-group v-model="cellularForm.modem.ant" size="small">
+                <el-radio-button :label="0">内置</el-radio-button>
+                <el-radio-button :label="1">外置</el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="⼯作模式" prop="blu">
+              <el-switch v-model="cellularForm.modem.dual_sim.enabled" active-text="双SIM" inactive-text="单SIM" :active-value="true" :inactive-value="false"/>
+            </el-form-item>
+            <el-form-item label="主卡" prop="blu">
+              <el-radio-group v-model="cellularForm.modem.dual_sim.main_sim" size="small">
+                <el-radio-button label="sim1">内置SIM1</el-radio-button>
+                <el-radio-button label="sim2">外置SIM2</el-radio-button>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="extsim" prop="blu">
+              <el-switch v-model="cellularForm.modem.dual_sim.extsim" active-text="开" inactive-text="关" :active-value="true" :inactive-value="false"/>
+            </el-form-item>
+          </el-form>
+        </el-tab-pane>
         <el-tab-pane label="系统配置" name="system">系统配置</el-tab-pane>
-        <el-tab-pane label="Task" name="fourth">Task</el-tab-pane>
+        <el-tab-pane label="状态获取" name="fourth">状态获取</el-tab-pane>
       </el-tabs>
     </el-dialog>
   </div>
@@ -462,6 +547,7 @@ const tabName = ref("wifi");
 const data = reactive({
   form: {},
   batchAddForm: {},
+  wrConfig: {wlanble: {}},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -507,7 +593,9 @@ const data = reactive({
   }
 });
 
-const {queryParams, form, rules, batchAddForm} = toRefs(data);
+const {queryParams, form, rules, batchAddForm, wrConfig} = toRefs(data);
+const wifiForm = computed(() => wrConfig.value.wlanble || {});
+const cellularForm = computed(() => wrConfig.value.cellular || {});
 
 /** 查询设备列表 */
 function getList() {
@@ -669,7 +757,52 @@ function handleExport() {
 }
 
 function handleConfig(row) {
+  resetConfigForm();
   showConfig.value = true;
+}
+
+function resetConfigForm() {
+  wrConfig.value = {
+    "wlanble": {
+      "ant": 0,
+      "wifi": {
+        "mode": 0,
+        "ap": {
+          "ssid": "WR300-InHand",
+          "key": "12345678",
+          "auth": "OPEN",
+        },
+        "sta": {
+          "ssid": "WR300-InHand",
+          "key": "12345678",
+        },
+        "center": {
+          "address": "192.168.2.100",
+          "port": 8000,
+          "protocol": "TCP",
+          "keepalive": 30
+        }
+      },
+      "ble": {
+        "mode": 0,
+        "server": {
+          "name": "WR300_BLE",
+        }
+      }
+    },
+    "cellular": {
+      "modem": {
+        "ant": 0,
+        "dual_sim": {
+          "enabled": true,
+          "main_sim": "sim1",
+          "extsim": false,
+        }
+      }
+    }
+  };
+  proxy.resetForm("wifiConfigRef");
+  proxy.resetForm("cellularConfigRef");
 }
 
 getList();
