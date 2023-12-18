@@ -544,6 +544,11 @@
         </el-tab-pane>
         <el-tab-pane label="状态获取" name="fourth">状态获取</el-tab-pane>
       </el-tabs>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-text class="mx-1" type="success">当前设备号：{{ equipment.equipmentIdentity}}</el-text>
+        </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -572,7 +577,7 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const tabName = ref("wifi");
-const equipmentId = ref(0);
+const equipment = ref({});
 const importJson = ref('');
 
 const data = reactive({
@@ -779,7 +784,7 @@ function submitWrConfig(type) {
       1: wrConfig.value.wlanble,
       2: wrConfig.value.cellular
     }
-    send5gConfigCmd(type, equipmentId.value, params[type]).then(response => {
+    send5gConfigCmd(type, equipment.value.equipmentId || 0, params[type]).then(response => {
       if (response.code === 200) {
         proxy.$modal.msgSuccess(response.msg || "提交成功");
       } else {
@@ -811,7 +816,7 @@ function handleExport() {
 }
 
 function handleConfig(row) {
-  equipmentId.value = row.equipmentId || 0;
+  equipment.value = row;
   resetConfigForm();
   showConfig.value = true;
 }
@@ -867,7 +872,9 @@ getList();
 
   .el-dialog__body {
     padding: 0 var(--el-dialog-padding-primary);
-    padding-bottom: var(--el-dialog-padding-primary);
+  }
+  .dialog-footer{
+    text-align: left;
   }
 }
 </style>
