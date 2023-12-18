@@ -546,7 +546,7 @@
       </el-tabs>
       <template #footer>
         <div class="dialog-footer">
-          <el-text class="mx-1" type="success">当前设备号：{{ equipment.equipmentIdentity}}</el-text>
+          <el-text class="mx-1" type="success">当前设备号：{{ equipment.equipmentIdentity }}</el-text>
         </div>
       </template>
     </el-dialog>
@@ -873,7 +873,8 @@ getList();
   .el-dialog__body {
     padding: 0 var(--el-dialog-padding-primary);
   }
-  .dialog-footer{
+
+  .dialog-footer {
     text-align: left;
   }
 }
