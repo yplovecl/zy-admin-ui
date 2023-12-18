@@ -423,8 +423,8 @@
     </el-dialog>
 
     <!-- WR平台⻚⾯配置对话框 -->
-    <el-dialog title="WR平台配置" v-model="showConfig" class="wr-config" width="500px" append-to-body>
-      <el-tabs v-model="tabName" class="config-tabs">
+    <el-dialog title="WR300平台配置" v-model="showConfig" class="wr-config" width="560px" append-to-body>
+      <el-tabs type="border-card" v-model="tabName" class="config-tabs">
         <el-tab-pane label="WIFI配置" name="wifi">
           <el-form ref="wifiConfigRef" :model="wifiForm" :rules="rules" label-width="100px" label-position="left">
             <el-form-item label="天线" prop="ant">
@@ -489,6 +489,11 @@
               <el-input v-model="wifiForm.ble.server.name" placeholder="蓝牙名称"/>
             </el-form-item>
           </el-form>
+          <el-row>
+            <el-col :span="12">
+              <el-button type="success" @click="submitBatchForm">保&nbsp;&nbsp;存</el-button>
+            </el-col>
+          </el-row>
         </el-tab-pane>
         <el-tab-pane label="蜂窝网络配置" name="cellular">
           <el-form ref="cellularConfigRef" :model="cellularForm" :rules="rules" label-width="100px" label-position="left">
@@ -511,8 +516,32 @@
               <el-switch v-model="cellularForm.modem.dual_sim.extsim" active-text="开" inactive-text="关" :active-value="true" :inactive-value="false"/>
             </el-form-item>
           </el-form>
+          <el-row>
+            <el-col :span="12">
+              <el-button type="success" @click="submitBatchForm">保&nbsp;&nbsp;存</el-button>
+            </el-col>
+          </el-row>
         </el-tab-pane>
-        <el-tab-pane label="系统配置" name="system">系统配置</el-tab-pane>
+        <el-tab-pane label="导⼊配置" name="import">
+          <el-row>
+            <el-col :span="24">
+              <el-input
+                  v-model="cellularForm"
+                  :rows="15"
+                  type="textarea"
+                  placeholder="请输入配置，JSON格式"
+              />
+            </el-col>
+          </el-row>
+          <el-row class="mt10">
+            <el-col :span="12">
+              <el-button type="primary" @click="submitBatchForm">保&nbsp;&nbsp;存</el-button>
+            </el-col>
+            <el-col :span="12">
+              <el-button type="success" @click="submitBatchForm">导&nbsp;&nbsp;出</el-button>
+            </el-col>
+          </el-row>
+        </el-tab-pane>
         <el-tab-pane label="状态获取" name="fourth">状态获取</el-tab-pane>
       </el-tabs>
     </el-dialog>
