@@ -123,3 +123,11 @@ export function batchAddEquipment(data) {
         data: data
     })
 }
+
+export function send5gConfigCmd(type, equipmentId, data) {
+    return request({
+        url: '/seismograph/equipment/send5gConfigCmd/' + type + '/' + equipmentId,
+        method: 'post',
+        data: data
+    })
+}

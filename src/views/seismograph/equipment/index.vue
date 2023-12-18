@@ -491,14 +491,14 @@
           </el-form>
           <el-row>
             <el-col :span="12">
-              <el-button type="success" @click="submitBatchForm">保&nbsp;&nbsp;存</el-button>
+              <el-button type="success" @click="submitWrConfig(1)">保&nbsp;&nbsp;存</el-button>
             </el-col>
           </el-row>
         </el-tab-pane>
         <el-tab-pane label="蜂窝网络配置" name="cellular">
           <el-form ref="cellularConfigRef" :model="cellularForm" :rules="rules" label-width="100px" label-position="left">
             <el-form-item label="天线" prop="ant">
-              <el-radio-group v-model="cellularForm.modem.ant" size="small">
+              <el-radio-group v-model="cellularForm.modem.ant">
                 <el-radio-button :label="0">内置</el-radio-button>
                 <el-radio-button :label="1">外置</el-radio-button>
               </el-radio-group>
@@ -507,7 +507,7 @@
               <el-switch v-model="cellularForm.modem.dual_sim.enabled" active-text="双SIM" inactive-text="单SIM" :active-value="true" :inactive-value="false"/>
             </el-form-item>
             <el-form-item label="主卡" prop="blu">
-              <el-radio-group v-model="cellularForm.modem.dual_sim.main_sim" size="small">
+              <el-radio-group v-model="cellularForm.modem.dual_sim.main_sim">
                 <el-radio-button label="sim1">内置SIM1</el-radio-button>
                 <el-radio-button label="sim2">外置SIM2</el-radio-button>
               </el-radio-group>
@@ -518,7 +518,7 @@
           </el-form>
           <el-row>
             <el-col :span="12">
-              <el-button type="success" @click="submitBatchForm">保&nbsp;&nbsp;存</el-button>
+              <el-button type="success" @click="submitWrConfig(2)">保&nbsp;&nbsp;存</el-button>
             </el-col>
           </el-row>
         </el-tab-pane>
@@ -526,7 +526,7 @@
           <el-row>
             <el-col :span="24">
               <el-input
-                  v-model="cellularForm"
+                  v-model="importJson"
                   :rows="15"
                   type="textarea"
                   placeholder="请输入配置，JSON格式"
@@ -535,7 +535,7 @@
           </el-row>
           <el-row class="mt10">
             <el-col :span="12">
-              <el-button type="primary" @click="submitBatchForm">保&nbsp;&nbsp;存</el-button>
+              <el-button type="primary" @click="submitWrConfig(3)">保&nbsp;&nbsp;存</el-button>
             </el-col>
             <el-col :span="12">
               <el-button type="success" @click="submitBatchForm">导&nbsp;&nbsp;出</el-button>
@@ -551,7 +551,7 @@
 <script setup name="Equipment">
 import {getCurrentInstance, reactive, ref} from 'vue'
 import {listEnterprise} from "@/api/seismograph/enterprise";
-import {addEquipment, batchAddEquipment, delEquipment, getEquipment, listEquipment, updateEquipment} from "@/api/seismograph/equipment";
+import {addEquipment, batchAddEquipment, delEquipment, getEquipment, listEquipment, send5gConfigCmd, updateEquipment} from "@/api/seismograph/equipment";
 import useUserStore from "@/store/modules/user";
 
 const {proxy} = getCurrentInstance();
@@ -572,6 +572,8 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const tabName = ref("wifi");
+const equipmentId = ref(0);
+const importJson = ref('');
 
 const data = reactive({
   form: {},
@@ -766,6 +768,29 @@ function submitBatchForm() {
   });
 }
 
+function submitWrConfig(type) {
+  const formRef = {
+    1: 'wifiConfigRef',
+    2: 'cellularConfigRef',
+  }
+  proxy.$refs[formRef[type]].validate(valid => {
+    if (!valid) return;
+    const params = {
+      1: wrConfig.value.wlanble,
+      2: wrConfig.value.cellular
+    }
+    send5gConfigCmd(type, equipmentId.value, params[type]).then(response => {
+      if (response.code === 200) {
+        proxy.$modal.msgSuccess(response.msg || "提交成功");
+      } else {
+        proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
+      }
+      open1.value = false;
+      getList();
+    });
+  });
+}
+
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _equipmentIds = row.equipmentId || ids.value;
@@ -786,6 +811,7 @@ function handleExport() {
 }
 
 function handleConfig(row) {
+  equipmentId.value = row.equipmentId || 0;
   resetConfigForm();
   showConfig.value = true;
 }
