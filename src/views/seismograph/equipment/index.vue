@@ -426,7 +426,7 @@
     <el-dialog title="WR300平台配置" v-model="showConfig" class="wr-config" width="560px" append-to-body>
       <el-tabs type="border-card" v-model="tabName" class="config-tabs">
         <el-tab-pane label="WIFI配置" name="wifi">
-          <el-form ref="wifiConfigRef" :model="wifiForm" :rules="rules" label-width="100px" label-position="left">
+          <el-form ref="wifiConfigRef" :model="wifiForm" :rules="wrRules" label-width="100px" label-position="left">
             <el-form-item label="天线" prop="ant">
               <el-radio-group v-model="wifiForm.ant">
                 <el-radio-button :label="0">内置</el-radio-button>
@@ -441,13 +441,13 @@
               </el-radio-group>
             </el-form-item>
             <template v-if="wifiForm.wifi.mode === 0">
-              <el-form-item label="SSID" prop="server">
+              <el-form-item label="SSID" prop="wifi.ap.ssid">
                 <el-input v-model="wifiForm.wifi.ap.ssid" placeholder="SSID" maxlength="64" show-word-limit/>
               </el-form-item>
-              <el-form-item label="密码" prop="server">
+              <el-form-item label="密码" prop="wifi.ap.key">
                 <el-input v-model="wifiForm.wifi.ap.key" placeholder="密码" maxlength="64" show-word-limit/>
               </el-form-item>
-              <el-form-item label="加密方式" prop="server">
+              <el-form-item label="加密方式" prop="wifi.ap.auth">
                 <el-select v-model="wifiForm.wifi.ap.auth" placeholder="请选择加密方式" style="width: 100%">
                   <el-option label="OPEN" value="OPEN"/>
                   <el-option label="WPAPSK" value="WPAPSK"/>
@@ -457,27 +457,27 @@
               </el-form-item>
             </template>
             <template v-else-if="wifiForm.wifi.mode === 1">
-              <el-form-item label="SSID" prop="server">
+              <el-form-item label="SSID" prop="wifi.sta.ssid">
                 <el-input v-model="wifiForm.wifi.sta.ssid" placeholder="SSID" maxlength="64" show-word-limit/>
               </el-form-item>
-              <el-form-item label="密码" prop="server">
+              <el-form-item label="密码" prop="wifi.sta.key">
                 <el-input v-model="wifiForm.wifi.sta.key" placeholder="密码" maxlength="64" show-word-limit/>
               </el-form-item>
             </template>
             <template v-else>
-              <el-form-item label="节点地址" prop="server">
-                <el-input v-model="wifiForm.wifi.center.address" placeholder="节点地址"/>
+              <el-form-item label="节点地址" prop="wifi.center.address">
+                <el-input v-model="wifiForm.wifi.center.address" placeholder="节点地址" maxlength="20" show-word-limit/>
               </el-form-item>
-              <el-form-item label="节点端口" prop="server">
+              <el-form-item label="节点端口" prop="wifi.center.port">
                 <el-input type="number" v-model="wifiForm.wifi.center.port" placeholder="节点端口"/>
               </el-form-item>
-              <el-form-item label="节点协议" prop="server">
+              <el-form-item label="节点协议" prop="wifi.center.protocol">
                 <el-radio-group v-model="wifiForm.wifi.center.protocol">
                   <el-radio label="TCP">TCP</el-radio>
                   <el-radio label="UDP">UDP</el-radio>
                 </el-radio-group>
               </el-form-item>
-              <el-form-item label="心跳时间" prop="server">
+              <el-form-item label="心跳时间" prop="wifi.center.keepalive">
                 <el-input type="number" v-model="wifiForm.wifi.center.keepalive" placeholder="心跳时间"/>
               </el-form-item>
             </template>
@@ -485,8 +485,8 @@
             <el-form-item label="蓝牙开关" prop="blu">
               <el-switch v-model="wifiForm.ble.mode" active-text="打开" inactive-text="关闭" :active-value="2" :inactive-value="0"/>
             </el-form-item>
-            <el-form-item v-if="wifiForm.ble.mode" label="蓝牙名称" prop="server">
-              <el-input v-model="wifiForm.ble.server.name" placeholder="蓝牙名称"/>
+            <el-form-item v-if="wifiForm.ble.mode" label="蓝牙名称" prop="ble.server.name">
+              <el-input v-model="wifiForm.ble.server.name" placeholder="蓝牙名称" maxlength="50" show-word-limit/>
             </el-form-item>
           </el-form>
           <el-row>
@@ -542,7 +542,7 @@
             </el-col>
           </el-row>
         </el-tab-pane>
-<!--        <el-tab-pane label="状态获取" name="fourth">状态获取</el-tab-pane>-->
+        <!--        <el-tab-pane label="状态获取" name="fourth">状态获取</el-tab-pane>-->
       </el-tabs>
       <template #footer>
         <div class="dialog-footer">
@@ -618,18 +618,62 @@ const data = reactive({
     idTpl: [
       {required: true, message: "请选设备编号模板", trigger: "change"}
     ],
-    // start: [
-    //   {required: true, message: "设备编号不能为空"},
-    //   {type: "integer", message: "请输入整数"},
-    //   {max: 999998, message: "不能超过999998"},
-    //   {min: 10, message: "不能小于0"}
-    // ],
     start: {type: "integer", min: 0, max: 999998, message: "0 - 999998之间", required: true, trigger: "blur"},
     end: {type: "integer", min: 1, max: 999999, message: "1 - 999999之间", required: true, trigger: "blur"}
+  },
+  wrRules: {
+    wifi: {
+      ap: {
+        ssid: [
+          {required: true, message: "请输入SSID", trigger: "blur"},
+          {max: 64, message: "SSID不能超过64个字符", trigger: "blur"},
+        ],
+        key: [
+          {required: true, message: "请输入密码", trigger: "blur"},
+          {max: 64, message: "密码不能超过64个字符", trigger: "blur"},
+          {min: 8, message: "密码不能少于8个字符", trigger: "blur"}
+        ],
+        auth: [
+          {required: true, message: "请选择加密方式", trigger: "change"}
+        ],
+      },
+      sta: {
+        ssid: [
+          {required: true, message: "请输入SSID", trigger: "blur"},
+          {max: 64, message: "SSID不能超过64个字符", trigger: "blur"},
+        ],
+        key: [
+          {required: true, message: "请输入密码", trigger: "blur"},
+          {max: 64, message: "密码不能超过64个字符", trigger: "blur"},
+          {min: 8, message: "密码不能少于8个字符", trigger: "blur"}
+        ]
+      },
+      center: {
+        address: [
+          {required: true, message: "请输入节点地址", trigger: "blur"},
+          {max: 20, message: "节点地址不能超过20个字符", trigger: "blur"},
+          {min: 7, message: "节点地址不能少于7个字符", trigger: "blur"}
+        ],
+        protocol: [
+          {required: true, message: "请选设备编号模板", trigger: "change"}
+        ],
+        port: {type: "integer", min: 0, max: 65535, message: "端口范围0 - 65535", required: true, trigger: "blur"},
+        keepalive: {type: "integer", min: 1, max: 999999, message: "⼼跳时间范围1 - 7200", required: true, trigger: "blur"}
+      }
+    },
+    ble: {
+      server: {
+        name: [
+          {required: true, message: "请输入蓝牙名称", trigger: "blur"},
+          {max: 50, message: "蓝牙名称不能超过50个字符", trigger: "blur"},
+          {min: 2, message: "蓝牙名称不能少于2个字符", trigger: "blur"}
+        ]
+      }
+    }
   }
 });
 
-const {queryParams, form, rules, batchAddForm, wrConfig} = toRefs(data);
+const {queryParams, form, rules, batchAddForm, wrConfig, wrRules} = toRefs(data);
 const wifiForm = computed(() => wrConfig.value.wlanble || {});
 const cellularForm = computed(() => wrConfig.value.cellular || {});
 
@@ -849,16 +893,16 @@ function resetConfigForm() {
       "wifi": {
         "mode": 0,
         "ap": {
-          "ssid": "WR300-InHand",
-          "key": "12345678",
-          "auth": "OPEN",
+          "ssid": "",
+          "key": "",
+          "auth": "OPEN"
         },
         "sta": {
-          "ssid": "WR300-InHand",
-          "key": "12345678",
+          "ssid": "",
+          "key": ""
         },
         "center": {
-          "address": "192.168.2.100",
+          "address": "127.0.0.1",
           "port": 8000,
           "protocol": "TCP",
           "keepalive": 30
@@ -867,7 +911,7 @@ function resetConfigForm() {
       "ble": {
         "mode": 0,
         "server": {
-          "name": "WR300_BLE",
+          "name": ""
         }
       }
     },
@@ -877,7 +921,7 @@ function resetConfigForm() {
         "dual_sim": {
           "enabled": true,
           "main_sim": "sim1",
-          "extsim": false,
+          "extsim": false
         }
       }
     }
