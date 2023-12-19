@@ -522,7 +522,7 @@
             </el-col>
           </el-row>
         </el-tab-pane>
-        <el-tab-pane label="导⼊配置" name="system" v-hasPermi="['seismograph:equipment:wrConfig:system']">
+        <el-tab-pane label="系统配置" name="system" v-hasPermi="['seismograph:equipment:wrConfig:system']">
           <el-row>
             <el-col :span="24">
               <el-input
