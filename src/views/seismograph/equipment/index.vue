@@ -535,10 +535,10 @@
           </el-row>
           <el-row class="mt10" justify="space-between">
             <el-col :span="12">
-              <el-button type="primary" icon="Upload" @click="submitWrConfig(3)">保&nbsp;&nbsp;存</el-button>
+              <el-button type="primary" icon="Upload" @click="importWrConfig()">导入配置</el-button>
             </el-col>
             <el-col :span="12">
-              <el-button type="success" text @click="submitBatchForm">导出配置</el-button>
+              <el-button type="success" text @click="exportWrConfig()">导出配置</el-button>
             </el-col>
           </el-row>
         </el-tab-pane>
@@ -583,7 +583,7 @@ const importJson = ref('');
 const data = reactive({
   form: {},
   batchAddForm: {},
-  wrConfig: {wlanble: {}},
+  wrConfig: {wlanble: {}, cellular: {}},
   queryParams: {
     pageNum: 1,
     pageSize: 10,
@@ -780,19 +780,40 @@ function submitWrConfig(type) {
   }
   proxy.$refs[formRef[type]].validate(valid => {
     if (!valid) return;
-    const params = {
-      1: wrConfig.value.wlanble,
-      2: wrConfig.value.cellular
-    }
-    send5gConfigCmd(type, equipment.value.equipmentId || 0, params[type]).then(response => {
+    send5gConfigCmd(type, equipment.value.equipmentId || 0, wrConfig.value).then(response => {
       if (response.code === 200) {
         proxy.$modal.msgSuccess(response.msg || "提交成功");
       } else {
         proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
       }
-      open1.value = false;
-      getList();
     });
+  });
+}
+
+function importWrConfig() {
+  if (!importJson.value) return proxy.$modal.msgError("请输入配置参数");
+  try {
+    const data = JSON.parse(importJson.value);
+    if (!data || typeof data !== "object") return proxy.$modal.msgError("参数格式错误");
+    send5gConfigCmd(3, equipment.value.equipmentId || 0, data).then(response => {
+      if (response.code === 200) {
+        proxy.$modal.msgSuccess(response.msg || "提交成功");
+      } else {
+        proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
+      }
+    });
+  } catch (e) {
+    proxy.$modal.msgError("参数格式错误，请检查");
+  }
+}
+
+function exportWrConfig() {
+  send5gConfigCmd(4, equipment.value.equipmentId || 0, {}).then(response => {
+    if (response.code === 200) {
+      proxy.$modal.msgSuccess(response.msg || "提交成功");
+    } else {
+      proxy.$modal.msgError(response.msg || "网络异常，请稍后再试");
+    }
   });
 }
 
