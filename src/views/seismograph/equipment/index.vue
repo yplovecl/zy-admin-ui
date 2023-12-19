@@ -200,7 +200,7 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" min-width="200">
         <template #default="scope">
           <el-button link type="primary" icon="Setting" @click="handleConfig(scope.row)"
-                     v-hasPermi="['seismograph:equipment:config']">配置
+                     v-hasPermi="['seismograph:equipment:wrConfig']">配置
           </el-button>
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)"
                      v-hasPermi="['seismograph:equipment:edit']">修改
@@ -442,7 +442,7 @@
             </el-form-item>
             <template v-if="wifiForm.wifi.mode === 0">
               <el-form-item label="SSID" prop="wifi.ap.ssid">
-                <el-input v-model="wifiForm.wifi.ap.ssid" placeholder="SSID" maxlength="64" show-word-limit/>
+                <el-input v-model="wifiForm.wifi.ap.ssid" placeholder="SSID" maxlength="64" show-word-limit :disabled="!editable"/>
               </el-form-item>
               <el-form-item label="密码" prop="wifi.ap.key">
                 <el-input v-model="wifiForm.wifi.ap.key" placeholder="密码" maxlength="64" show-word-limit/>
@@ -466,19 +466,19 @@
             </template>
             <template v-else>
               <el-form-item label="节点地址" prop="wifi.center.address">
-                <el-input v-model="wifiForm.wifi.center.address" placeholder="节点地址" maxlength="20" show-word-limit/>
+                <el-input v-model="wifiForm.wifi.center.address" placeholder="节点地址" maxlength="20" show-word-limit :disabled="!editable"/>
               </el-form-item>
               <el-form-item label="节点端口" prop="wifi.center.port">
-                <el-input type="number" v-model="wifiForm.wifi.center.port" placeholder="节点端口"/>
+                <el-input type="number" v-model="wifiForm.wifi.center.port" placeholder="节点端口" :disabled="!editable"/>
               </el-form-item>
               <el-form-item label="节点协议" prop="wifi.center.protocol">
-                <el-radio-group v-model="wifiForm.wifi.center.protocol">
+                <el-radio-group v-model="wifiForm.wifi.center.protocol" :disabled="!editable">
                   <el-radio label="TCP">TCP</el-radio>
                   <el-radio label="UDP">UDP</el-radio>
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="心跳时间" prop="wifi.center.keepalive">
-                <el-input type="number" v-model="wifiForm.wifi.center.keepalive" placeholder="心跳时间"/>
+                <el-input type="number" v-model="wifiForm.wifi.center.keepalive" placeholder="心跳时间" :disabled="!editable"/>
               </el-form-item>
             </template>
 
@@ -486,7 +486,7 @@
               <el-switch v-model="wifiForm.ble.mode" active-text="打开" inactive-text="关闭" :active-value="2" :inactive-value="0"/>
             </el-form-item>
             <el-form-item v-if="wifiForm.ble.mode" label="蓝牙名称" prop="ble.server.name">
-              <el-input v-model="wifiForm.ble.server.name" placeholder="蓝牙名称" maxlength="50" show-word-limit/>
+              <el-input v-model="wifiForm.ble.server.name" placeholder="蓝牙名称" maxlength="50" show-word-limit :disabled="!editable"/>
             </el-form-item>
           </el-form>
           <el-row>
@@ -522,7 +522,7 @@
             </el-col>
           </el-row>
         </el-tab-pane>
-        <el-tab-pane label="导⼊配置" name="import">
+        <el-tab-pane label="导⼊配置" name="system" v-hasPermi="['seismograph:equipment:wrConfig:system']">
           <el-row>
             <el-col :span="24">
               <el-input
@@ -579,6 +579,8 @@ const title = ref("");
 const tabName = ref("wifi");
 const equipment = ref({});
 const importJson = ref('');
+
+const editable = computed(() => !userStore.enterprise?.enterpriseId)
 
 const data = reactive({
   form: {},
