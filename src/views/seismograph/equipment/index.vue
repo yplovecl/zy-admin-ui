@@ -542,7 +542,7 @@
             </el-col>
           </el-row>
         </el-tab-pane>
-        <el-tab-pane label="状态获取" name="fourth">状态获取</el-tab-pane>
+<!--        <el-tab-pane label="状态获取" name="fourth">状态获取</el-tab-pane>-->
       </el-tabs>
       <template #footer>
         <div class="dialog-footer">
