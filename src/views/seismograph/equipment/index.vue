@@ -556,7 +556,16 @@
 <script setup name="Equipment">
 import {getCurrentInstance, reactive, ref} from 'vue'
 import {listEnterprise} from "@/api/seismograph/enterprise";
-import {addEquipment, batchAddEquipment, delEquipment, getEquipment, listEquipment, send5gConfigCmd, updateEquipment} from "@/api/seismograph/equipment";
+import {
+  addEquipment,
+  batchAddEquipment,
+  delEquipment,
+  getEquipment,
+  getWrConfig,
+  listEquipment,
+  send5gConfigCmd,
+  updateEquipment
+} from "@/api/seismograph/equipment";
 import useUserStore from "@/store/modules/user";
 
 const {proxy} = getCurrentInstance();
@@ -884,12 +893,20 @@ function handleExport() {
 
 function handleConfig(row) {
   equipment.value = row;
-  resetConfigForm();
-  showConfig.value = true;
+  proxy.$modal.loading("正在加载设备数据，请稍候！");
+  getWrConfig(equipment.value.equipmentId || 0).then(response => {
+    if (Object.keys(response.data).length > 0) {
+      resetConfigForm(response.data);
+    } else {
+      proxy.$modal.msgError("设备未上报配置");
+      resetConfigForm();
+    }
+    showConfig.value = true;
+  }).finally(proxy.$modal.closeLoading);
 }
 
-function resetConfigForm() {
-  wrConfig.value = {
+function resetConfigForm(config = null) {
+  wrConfig.value = Object.assign({
     "wlanble": {
       "ant": 0,
       "wifi": {
@@ -927,7 +944,7 @@ function resetConfigForm() {
         }
       }
     }
-  };
+  }, config || {});
   proxy.resetForm("wifiConfigRef");
   proxy.resetForm("cellularConfigRef");
 }

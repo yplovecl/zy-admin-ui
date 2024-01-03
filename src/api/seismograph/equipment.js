@@ -131,3 +131,10 @@ export function send5gConfigCmd(type, equipmentId, data) {
         data: data
     })
 }
+
+export function getWrConfig(equipmentId) {
+    return request({
+        url: '/seismograph/equipment/wrConfig/' + equipmentId,
+        method: 'get'
+    })
+}
