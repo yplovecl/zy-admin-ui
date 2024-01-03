@@ -530,14 +530,15 @@
                   :rows="15"
                   type="textarea"
                   placeholder="请输入配置，JSON格式"
+                  readonly
               />
             </el-col>
           </el-row>
           <el-row class="mt10" justify="space-between">
-            <el-col :span="12">
+            <el-col :span="12" v-if="false">
               <el-button type="primary" icon="Upload" @click="importWrConfig()">导入配置</el-button>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="24">
               <el-button type="success" text @click="exportWrConfig()">导出配置</el-button>
             </el-col>
           </el-row>
@@ -863,6 +864,36 @@ function importWrConfig() {
 }
 
 function exportWrConfig() {
+  if(!importJson.value) return proxy.$modal.msgError("设备未上传配置");
+  exportFile(importJson.value, `device-config-${equipment.value.equipmentIdentity}.json`)
+}
+
+function exportFile(data, fileName) {
+  // 声明blob对象
+  const streamData = new Blob([data], { type: 'application/octet-stream' });
+  // ie || edge 浏览器
+  if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+    // msSaveOrOpenBlob => 提供保存和打开按钮
+    // msSaveBlob => 只提供一个保存按钮
+    window.navigator.msSaveOrOpenBlob(streamData, fileName);
+  } else {
+    // 创建隐藏的可下载链接
+    const link = document.createElement('a');
+    // 下载文件名称
+    link.download = fileName;
+    // link.style.visibility = 'hidden';
+    link.style.display = 'none';
+    // 字符内容转变为blob地址
+    link.href = window.URL.createObjectURL(streamData);
+    // 触发点击
+    document.body.appendChild(link);
+    link.click();
+    // 移除
+    document.body.removeChild(link);
+  }
+}
+
+function exportWrConfig1() {
   send5gConfigCmd(4, equipment.value.equipmentId || 0, {}).then(response => {
     if (response.code === 200) {
       proxy.$modal.msgSuccess(response.msg || "提交成功");
@@ -896,6 +927,7 @@ function handleConfig(row) {
   proxy.$modal.loading("正在加载设备数据，请稍候！");
   getWrConfig(equipment.value.equipmentId || 0).then(response => {
     if (Object.keys(response.data).length > 0) {
+      importJson.value = JSON.stringify(response.data, null, 2)
       resetConfigForm(response.data);
     } else {
       proxy.$modal.msgError("设备未上报配置");
@@ -928,7 +960,7 @@ function resetConfigForm(config = null) {
         }
       },
       "ble": {
-        "mode": 0,
+        "mode": 2,
         "server": {
           "name": ""
         }
