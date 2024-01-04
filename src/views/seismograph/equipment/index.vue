@@ -864,7 +864,7 @@ function importWrConfig() {
   try {
     const data = JSON.parse(importJson.value);
     if (!data || typeof data !== "object") return proxy.$modal.msgError("参数格式错误");
-    send5gConfigCmd(4, equipment.value.equipmentId || 0, data).then(response => {
+    send5gConfigCmd(3, equipment.value.equipmentId || 0, data).then(response => {
       if (response.code === 200) {
         proxy.$modal.msgSuccess(response.msg || "提交成功");
       } else {
