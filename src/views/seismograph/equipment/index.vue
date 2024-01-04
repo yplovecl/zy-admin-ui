@@ -544,15 +544,15 @@
                   :rows="15"
                   type="textarea"
                   placeholder="请输入配置，JSON格式`"
-                  readonly
               />
             </el-col>
           </el-row>
           <el-row class="mt10" justify="space-between">
-            <el-col :span="12" v-if="false">
-              <el-button type="primary" icon="Upload" @click="importWrConfig()">导入配置</el-button>
+            <el-col :span="12">
+<!--              <el-button type="primary" icon="Upload" @click="importWrConfig()">导入配置</el-button>-->
+              <el-button type="primary" icon="Upload" @click="importWrConfig()">导出配置</el-button>
             </el-col>
-            <el-col :span="24">
+            <el-col :span="24" v-if="false">
               <el-button type="success" text @click="exportWrConfig()">导出配置</el-button>
             </el-col>
           </el-row>
@@ -957,7 +957,7 @@ function handleConfig(row) {
       deviceStatus.value = response.deviceStatus
     }
     if (Object.keys(response.data).length > 0) {
-      importJson.value = JSON.stringify(response.data, null, 2)
+      // importJson.value = JSON.stringify(response.data, null, 2)
       resetConfigForm(response.data);
     } else {
       proxy.$modal.msgError("设备未上报配置");
