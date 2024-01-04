@@ -499,7 +499,7 @@
             <el-form-item label="蓝牙开关" prop="blu">
               <el-switch v-model="wifiForm.ble.mode" active-text="打开" inactive-text="关闭" :active-value="2" :inactive-value="0"/>
             </el-form-item>
-            <el-form-item v-if="wifiForm.ble.mode" label="蓝牙名称" prop="ble.server.name">
+            <el-form-item label="蓝牙名称" prop="ble.server.name">
               <el-input v-model="wifiForm.ble.server.name" placeholder="蓝牙名称" maxlength="50" show-word-limit :disabled="!editable"/>
             </el-form-item>
           </el-form>
