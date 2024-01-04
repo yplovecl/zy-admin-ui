@@ -549,7 +549,7 @@
           </el-row>
           <el-row class="mt10" justify="space-between">
             <el-col :span="12">
-<!--              <el-button type="primary" icon="Upload" @click="importWrConfig()">导入配置</el-button>-->
+              <!--              <el-button type="primary" icon="Upload" @click="importWrConfig()">导入配置</el-button>-->
               <el-button type="primary" icon="Upload" @click="importWrConfig()">导出配置</el-button>
             </el-col>
             <el-col :span="24" v-if="false">
@@ -602,20 +602,7 @@ const title = ref("");
 const tabName = ref("wifi");
 const equipment = ref({});
 const importJson = ref('');
-const deviceStatus = ref({
-  "stats": {
-    "model": "",
-    "serial_number": "",
-    "firmware_version": ""
-  },
-  "Cellular": {
-    "link_mode": 0,
-    "siglevel": 0,
-    "operator": "",
-    "iccid": "",
-    "modem": ""
-  }
-});
+const deviceStatus = ref({});
 
 const editable = computed(() => !userStore.enterprise?.enterpriseId)
 
@@ -953,8 +940,19 @@ function handleConfig(row) {
   equipment.value = row;
   proxy.$modal.loading("正在加载设备数据，请稍候！");
   getWrConfig(equipment.value.equipmentId || 0).then(response => {
-    if (response.deviceStatus) {
-      deviceStatus.value = response.deviceStatus
+    deviceStatus.value = response.deviceStatus || {
+      "stats": {
+        "model": "",
+        "serial_number": "",
+        "firmware_version": ""
+      },
+      "Cellular": {
+        "link_mode": 0,
+        "siglevel": 0,
+        "operator": "",
+        "iccid": "",
+        "modem": ""
+      }
     }
     if (Object.keys(response.data).length > 0) {
       // importJson.value = JSON.stringify(response.data, null, 2)
