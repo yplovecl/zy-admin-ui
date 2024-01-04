@@ -523,7 +523,7 @@
             <el-form-item label="主卡" prop="blu">
               <el-radio-group v-model="cellularForm.modem.dual_sim.main_sim">
                 <el-radio-button label="sim1">内置SIM1</el-radio-button>
-                <el-radio-button label="sim2">外置SIM2</el-radio-button>
+                <el-radio-button label="sim2">内置SIM2</el-radio-button>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="extsim" prop="blu">
@@ -998,7 +998,7 @@ function resetConfigForm(config = null) {
       "modem": {
         "ant": 0,
         "dual_sim": {
-          "enabled": true,
+          "enabled": false,
           "main_sim": "sim1",
           "extsim": false
         }
