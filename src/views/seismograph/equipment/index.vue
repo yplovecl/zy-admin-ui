@@ -435,9 +435,9 @@
             </el-form-item>
             <el-form-item label="模式" prop="mode">
               <el-radio-group v-model="wifiForm.wifi.mode">
-                <el-radio-button :label="0">AP</el-radio-button>
                 <el-radio-button :label="1">STA</el-radio-button>
-                <el-radio-button :label="2">数据中⼼</el-radio-button>
+                <el-radio-button :label="2">AP</el-radio-button>
+                <el-radio-button :label="3">AP+STA</el-radio-button>
               </el-radio-group>
             </el-form-item>
             <template v-if="wifiForm.wifi.mode === 0">
@@ -445,7 +445,7 @@
                 <el-input v-model="wifiForm.wifi.ap.ssid" placeholder="SSID" maxlength="64" show-word-limit :disabled="!editable"/>
               </el-form-item>
               <el-form-item label="密码" prop="wifi.ap.key">
-                <el-input v-model="wifiForm.wifi.ap.key" placeholder="密码" maxlength="64" show-word-limit/>
+                <el-input v-model="wifiForm.wifi.ap.key" placeholder="密码" maxlength="64" show-word-limit :disabled="!editable"/>
               </el-form-item>
               <el-form-item label="加密方式" prop="wifi.ap.auth">
                 <el-select v-model="wifiForm.wifi.ap.auth" placeholder="请选择加密方式" style="width: 100%">
@@ -933,6 +933,7 @@ function handleConfig(row) {
       proxy.$modal.msgError("设备未上报配置");
       resetConfigForm();
     }
+    tabName.value = "wifi"
     showConfig.value = true;
   }).finally(proxy.$modal.closeLoading);
 }
