@@ -432,7 +432,7 @@
             <el-descriptions-item label="固件版本">{{ deviceStatus.stats?.firmware_version || '-' }}</el-descriptions-item>
           </el-descriptions>
           <el-descriptions title="蜂窝⽹" :column="1">
-            <el-descriptions-item label="⼯作模式">{{ deviceStatus.Cellular?.link_mode || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="⼯作模式">SIM{{ deviceStatus.Cellular?.link_mode }}</el-descriptions-item>
             <el-descriptions-item label="信号强度">{{ deviceStatus.Cellular?.siglevel || '-' }}</el-descriptions-item>
             <el-descriptions-item label="运营商">{{ deviceStatus.Cellular?.operator || '-' }}</el-descriptions-item>
             <el-descriptions-item label="ICCID">{{ deviceStatus.Cellular?.iccid || '-' }}</el-descriptions-item>
@@ -454,7 +454,7 @@
                 <el-radio-button :label="3">AP+STA</el-radio-button>
               </el-radio-group>
             </el-form-item>
-            <template v-if="wifiForm.wifi.mode === 0">
+            <template v-if="wifiForm.wifi.mode === 2">
               <el-form-item label="SSID" prop="wifi.ap.ssid">
                 <el-input v-model="wifiForm.wifi.ap.ssid" placeholder="SSID" maxlength="64" show-word-limit :disabled="!editable"/>
               </el-form-item>
@@ -475,7 +475,7 @@
                 <el-input v-model="wifiForm.wifi.sta.ssid" placeholder="SSID" maxlength="64" show-word-limit/>
               </el-form-item>
               <el-form-item label="密码" prop="wifi.sta.key">
-                <el-input v-model="wifiForm.wifi.sta.key" placeholder="密码" maxlength="64" show-word-limit/>
+                <el-input v-model="wifiForm.wifi.sta.key" placeholder="密码" maxlength="64" show-word-limit :disabled="!editable"/>
               </el-form-item>
             </template>
             <template v-else>
@@ -548,9 +548,8 @@
             </el-col>
           </el-row>
           <el-row class="mt10" justify="space-between">
-            <el-col :span="12">
-              <!--              <el-button type="primary" icon="Upload" @click="importWrConfig()">导入配置</el-button>-->
-              <el-button type="primary" icon="Upload" @click="importWrConfig()">导出配置</el-button>
+            <el-col :span="24">
+              <el-button type="primary" icon="Upload" @click="importWrConfig()">导入配置</el-button>
             </el-col>
             <el-col :span="24" v-if="false">
               <el-button type="success" text @click="exportWrConfig()">导出配置</el-button>
