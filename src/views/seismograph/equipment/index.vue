@@ -425,6 +425,20 @@
     <!-- WR平台⻚⾯配置对话框 -->
     <el-dialog title="WR300平台配置" v-model="showConfig" class="wr-config" width="560px" append-to-body>
       <el-tabs type="border-card" v-model="tabName" class="config-tabs">
+        <el-tab-pane label="设备状态" name="status">
+          <el-descriptions title="概要" :column="1">
+            <el-descriptions-item label="设备型号">{{ deviceStatus.stats?.model || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="序列号">{{ deviceStatus.stats?.serial_number || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="固件版本">{{ deviceStatus.stats?.firmware_version || '-' }}</el-descriptions-item>
+          </el-descriptions>
+          <el-descriptions title="蜂窝⽹" :column="1">
+            <el-descriptions-item label="⼯作模式">{{ deviceStatus.Cellular?.link_mode || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="信号强度">{{ deviceStatus.Cellular?.siglevel || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="运营商">{{ deviceStatus.Cellular?.operator || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="ICCID">{{ deviceStatus.Cellular?.iccid || '-' }}</el-descriptions-item>
+            <el-descriptions-item label="拨号⽅式">{{ deviceStatus.Cellular?.modem || '-' }}</el-descriptions-item>
+          </el-descriptions>
+        </el-tab-pane>
         <el-tab-pane label="WIFI配置" name="wifi">
           <el-form ref="wifiConfigRef" :model="wifiForm" :rules="wrRules" label-width="100px" label-position="left">
             <el-form-item label="天线" prop="ant">
@@ -529,7 +543,7 @@
                   v-model="importJson"
                   :rows="15"
                   type="textarea"
-                  placeholder="请输入配置，JSON格式"
+                  placeholder="请输入配置，JSON格式`"
                   readonly
               />
             </el-col>
@@ -543,7 +557,6 @@
             </el-col>
           </el-row>
         </el-tab-pane>
-        <!--        <el-tab-pane label="状态获取" name="fourth">状态获取</el-tab-pane>-->
       </el-tabs>
       <template #footer>
         <div class="dialog-footer">
@@ -589,6 +602,20 @@ const title = ref("");
 const tabName = ref("wifi");
 const equipment = ref({});
 const importJson = ref('');
+const deviceStatus = ref({
+  "stats": {
+    "model": "",
+    "serial_number": "",
+    "firmware_version": ""
+  },
+  "Cellular": {
+    "link_mode": 0,
+    "siglevel": 0,
+    "operator": "",
+    "iccid": "",
+    "modem": ""
+  }
+});
 
 const editable = computed(() => !userStore.enterprise?.enterpriseId)
 
@@ -863,14 +890,14 @@ function importWrConfig() {
   }
 }
 
-function exportWrConfig() {
-  if(!importJson.value) return proxy.$modal.msgError("设备未上传配置");
+function exportWrConfig1() {
+  if (!importJson.value) return proxy.$modal.msgError("设备未上传配置");
   exportFile(importJson.value, `device-config-${equipment.value.equipmentIdentity}.json`)
 }
 
 function exportFile(data, fileName) {
   // 声明blob对象
-  const streamData = new Blob([data], { type: 'application/octet-stream' });
+  const streamData = new Blob([data], {type: 'application/octet-stream'});
   // ie || edge 浏览器
   if (window.navigator && window.navigator.msSaveOrOpenBlob) {
     // msSaveOrOpenBlob => 提供保存和打开按钮
@@ -893,7 +920,7 @@ function exportFile(data, fileName) {
   }
 }
 
-function exportWrConfig1() {
+function exportWrConfig() {
   send5gConfigCmd(4, equipment.value.equipmentId || 0, {}).then(response => {
     if (response.code === 200) {
       proxy.$modal.msgSuccess(response.msg || "提交成功");
@@ -926,6 +953,9 @@ function handleConfig(row) {
   equipment.value = row;
   proxy.$modal.loading("正在加载设备数据，请稍候！");
   getWrConfig(equipment.value.equipmentId || 0).then(response => {
+    if (response.deviceStatus) {
+      deviceStatus.value = response.deviceStatus
+    }
     if (Object.keys(response.data).length > 0) {
       importJson.value = JSON.stringify(response.data, null, 2)
       resetConfigForm(response.data);
@@ -933,7 +963,7 @@ function handleConfig(row) {
       proxy.$modal.msgError("设备未上报配置");
       resetConfigForm();
     }
-    tabName.value = "wifi"
+    tabName.value = "status"
     showConfig.value = true;
   }).finally(proxy.$modal.closeLoading);
 }
