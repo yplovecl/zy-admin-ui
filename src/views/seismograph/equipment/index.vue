@@ -395,10 +395,12 @@
         </el-form-item>
         <el-form-item label="设备编号模板" prop="idTpl">
           <el-select v-model="batchAddForm.idTpl" placeholder="请选择设备编号模板" style="width: 100%">
-            <el-option key="BLA-3C-5G-S10-XXXXXX" label="BLA-3C-5G-S10-XXXXXX" value="BLA-3C-5G-S10-XXXXXX"/>
-            <el-option key="BLA-S-XXXXXX-5G1" label="BLA-S-XXXXXX-5G1" value="BLA-S-XXXXXX-5G1"/>
-            <el-option key="CDS-E20-XXXXXX-5G" label="CDS-E20-XXXXXX-5G" value="CDS-E20-XXXXXX-5G"/>
-            <el-option key="ceshiXXXXXX" label="ceshiXXXXXX" value="ceshiXXXXXX"/>
+            <el-option
+                v-for="dict in device_id_tpl"
+                :key="dict.value"
+                :label="dict.label"
+                :value="dict.value"
+            />
           </el-select>
         </el-form-item>
         <el-row>
@@ -582,7 +584,7 @@ import {
 import useUserStore from "@/store/modules/user";
 
 const {proxy} = getCurrentInstance();
-const {document_type, sys_yes_no, device_work_mode} = proxy.useDict('document_type', 'sys_yes_no', 'device_work_mode');
+const {document_type, sys_yes_no, device_work_mode, device_id_tpl} = proxy.useDict('document_type', 'sys_yes_no', 'device_work_mode', 'device_id_tpl');
 
 const userStore = useUserStore()
 
