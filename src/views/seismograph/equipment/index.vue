@@ -397,7 +397,7 @@
           <el-select v-model="batchAddForm.idTpl" placeholder="请选择设备编号模板" style="width: 100%">
             <el-option key="BLA-3C-5G-S10-XXXXXX" label="BLA-3C-5G-S10-XXXXXX" value="BLA-3C-5G-S10-XXXXXX"/>
             <el-option key="BLA-S-XXXXXX-5G1" label="BLA-S-XXXXXX-5G1" value="BLA-S-XXXXXX-5G1"/>
-            <el-option key="CDS-E20-XXXXXX" label="CDS-E20-XXXXXX" value="CDS-E20-XXXXXX"/>
+            <el-option key="CDS-E20-XXXXXX-5G" label="CDS-E20-XXXXXX-5G" value="CDS-E20-XXXXXX-5G"/>
             <el-option key="ceshiXXXXXX" label="ceshiXXXXXX" value="ceshiXXXXXX"/>
           </el-select>
         </el-form-item>
