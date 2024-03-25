@@ -59,7 +59,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2018-2023 芸享信息 备案号：渝ICP备18010209号</span>
+      <span>Copyright © 2018-2024 芸享信息 备案号：渝ICP备18010209号</span>
     </div>
   </div>
 </template>

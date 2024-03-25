@@ -418,7 +418,7 @@ const data = reactive({
   rules: {
     userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
     nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
-    password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }],
+    password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }, { pattern: /^[^<>"'|\\]+$/, message: "不能包含非法字符：< > \" ' \\\ |", trigger: "blur" }],
     email: [{ type: "email", message: "请输入正确的邮箱地址", trigger: ["blur", "change"] }],
     deptId: [{ required: true, message: "请选择部门", trigger: "change" }],
     enterpriseId: [{ required: true, message: "请选择企业", trigger: "change" }],
@@ -536,6 +536,11 @@ function handleResetPwd(row) {
     closeOnClickModal: false,
     inputPattern: /^.{5,20}$/,
     inputErrorMessage: "用户密码长度必须介于 5 和 20 之间",
+    inputValidator: (value) => {
+      if (/<|>|"|'|\||\\/.test(value)) {
+        return "不能包含非法字符：< > \" ' \\\ |"
+      }
+    },
   }).then(({ value }) => {
     resetUserPwd(row.userId, value).then(response => {
       proxy.$modal.msgSuccess("修改成功，新密码是：" + value);
