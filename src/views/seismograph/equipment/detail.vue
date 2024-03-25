@@ -67,10 +67,13 @@
                   </div>
                 </td>
                 <td class="el-table__cell is-leaf">
-                  <div class="cell">站点号</div>
+                  <div class="cell">是否采集</div>
                 </td>
                 <td class="el-table__cell is-leaf">
-                  <div class="cell">{{ device.siteNo || '-' }}</div>
+                  <div class="cell">
+                    <el-tag v-if="device.pluckState" type="success" size="default">是</el-tag>
+                    <el-tag v-else type="danger" size="default">否</el-tag>
+                  </div>
                 </td>
               </tr>
               <tr>
