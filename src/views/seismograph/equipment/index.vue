@@ -137,6 +137,24 @@
         >批量添加
         </el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-dropdown
+            :disabled="multiple"
+            v-hasPermi="['seismograph:equipment:query']"
+        >
+            <el-button type="success" plain :disabled="multiple">
+                发送指令<el-icon class="el-icon--right"><arrow-down /></el-icon>
+              </el-button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item @click="sendCmdControlEvt(1)">开机</el-dropdown-item>
+                <el-dropdown-item @click="sendCmdControlEvt(2)">关机</el-dropdown-item>
+                <el-dropdown-item @click="sendCmdHex('3A0154')">打开波形</el-dropdown-item>
+                <el-dropdown-item @click="sendCmdHex('3A0155')">关闭波形</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
+      </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -577,8 +595,8 @@ import {
   delEquipment,
   getEquipment,
   getWrConfig,
-  listEquipment,
-  send5gConfigCmd,
+  listEquipment, send5gCommandHex,
+  send5gConfigCmd, sendCmdControl,
   updateEquipment
 } from "@/api/seismograph/equipment";
 import useUserStore from "@/store/modules/user";
@@ -842,6 +860,20 @@ function submitBatchForm() {
       getList();
     });
   });
+}
+
+const sendCmdHex = (hex) => {
+  const _equipmentIds = ids.value;
+  send5gCommandHex(_equipmentIds, {hex}).then(response => {
+    proxy.$modal.msgSuccess(response.msg || "指令已发送");
+  })
+}
+
+const sendCmdControlEvt = (type) => {
+  const _equipmentIds = ids.value;
+  sendCmdControl(_equipmentIds, type).then(response => {
+    proxy.$modal.msgSuccess(response.msg || "指令已发送");
+  })
 }
 
 function submitWrConfig(type) {
