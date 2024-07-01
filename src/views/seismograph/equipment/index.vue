@@ -1035,11 +1035,11 @@ getList();
 
 .el-table {
   .warning-row {
-    --el-table-tr-bg-color: var(--el-color-danger);
+    --el-table-tr-bg-color: var(--el-color-danger-light-5);
   }
 
   .success-row {
-    --el-table-tr-bg-color: var(--el-color-success);
+    --el-table-tr-bg-color: var(--el-color-success-light-3);
   }
 }
 </style>
