@@ -10,7 +10,7 @@
         />
       </el-form-item>
       <el-form-item label="类别" prop="type">
-        <el-select v-model="queryParams.type" placeholder="请选择类别" clearable>
+        <el-select v-model="queryParams.type" placeholder="请选择类别" clearable style="width: 150px">
           <el-option
               v-for="dict in app_system"
               :key="dict.value"
@@ -20,7 +20,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="强制更新" prop="enforce">
-        <el-select v-model="queryParams.enforce" placeholder="请选择强制更新" clearable>
+        <el-select v-model="queryParams.enforce" placeholder="请选择强制更新" clearable style="width: 150px">
           <el-option
               v-for="dict in sys_yes_no"
               :key="dict.value"

@@ -10,7 +10,7 @@
         />
       </el-form-item>
       <el-form-item label="企业等级" prop="enterpriseLevel">
-        <el-select v-model="queryParams.enterpriseLevel" placeholder="请选择企业等级" clearable>
+        <el-select v-model="queryParams.enterpriseLevel" placeholder="请选择企业等级" clearable style="width: 150px">
           <el-option
               v-for="dict in enterprise_level"
               :key="dict.value"
@@ -20,7 +20,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable>
+        <el-select v-model="queryParams.status" placeholder="请选择状态" clearable style="width: 150px">
           <el-option
               v-for="dict in sys_normal_disable"
               :key="dict.value"

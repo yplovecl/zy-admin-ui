@@ -2,7 +2,7 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="80px">
       <el-form-item label="固件类型" prop="firmwareType">
-        <el-select v-model="queryParams.firmwareType" placeholder="请选择固件类型" clearable>
+        <el-select v-model="queryParams.firmwareType" placeholder="请选择固件类型" clearable style="width: 150px">
           <el-option
               v-for="dict in firmware_type"
               :key="dict.value"
