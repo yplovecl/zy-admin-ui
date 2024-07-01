@@ -168,10 +168,10 @@
       <!--      <el-table-column label="纬度" align="center" prop="siteLocLat" min-width="120" :show-overflow-tooltip="true"/>-->
       <el-table-column label="设备地址" align="center" prop="siteLoc" min-width="300" :show-overflow-tooltip="true">
         <template #default="scope">
-<!--          <el-link v-if="scope.row.siteLocLon && scope.row.siteLocLat"
-                   :href="`https://uri.amap.com/marker?position=${scope.row.siteLocLon},${scope.row.siteLocLat}`"
-                   target="_blank">{{ scope.row.siteLocLon }},{{ scope.row.siteLocLat }}
-          </el-link>-->
+          <!--          <el-link v-if="scope.row.siteLocLon && scope.row.siteLocLat"
+                             :href="`https://uri.amap.com/marker?position=${scope.row.siteLocLon},${scope.row.siteLocLat}`"
+                             target="_blank">{{ scope.row.siteLocLon }},{{ scope.row.siteLocLat }}
+                    </el-link>-->
           {{ scope.row.siteLocLon || '--' }},{{ scope.row.siteLocLat || '--' }}
         </template>
       </el-table-column>
@@ -1015,8 +1015,8 @@ function resetConfigForm(config = null) {
   proxy.resetForm("cellularConfigRef");
 }
 
-const tableRowClassName = ({row, rowIndex}) => {
-  return row.rtk === 4 ? 'success-row' : 'warning-row';
+const tableRowClassName = ({row}) => {
+  return row.remark === "rtk=4" ? 'success-row' : 'warning-row';
 }
 
 getList();
@@ -1035,11 +1035,11 @@ getList();
 
 .el-table {
   .warning-row {
-    --el-table-tr-bg-color: var(--el-color-warning);
+    --el-table-tr-bg-color: var(--el-color-danger);
   }
 
-  //.success-row {
-  //  --el-table-tr-bg-color: var(--el-color-success);
-  //}
+  .success-row {
+    --el-table-tr-bg-color: var(--el-color-success);
+  }
 }
 </style>
