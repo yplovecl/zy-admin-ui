@@ -168,11 +168,11 @@
       <!--      <el-table-column label="纬度" align="center" prop="siteLocLat" min-width="120" :show-overflow-tooltip="true"/>-->
       <el-table-column label="设备地址" align="center" prop="siteLoc" min-width="300" :show-overflow-tooltip="true">
         <template #default="scope">
-          <el-link v-if="scope.row.siteLocLon && scope.row.siteLocLat"
+<!--          <el-link v-if="scope.row.siteLocLon && scope.row.siteLocLat"
                    :href="`https://uri.amap.com/marker?position=${scope.row.siteLocLon},${scope.row.siteLocLat}`"
                    target="_blank">{{ scope.row.siteLocLon }},{{ scope.row.siteLocLat }}
-          </el-link>
-          <span v-else>{{ scope.row.siteLocLon || '--' }},{{ scope.row.siteLocLat || '--' }}</span>
+          </el-link>-->
+          {{ scope.row.siteLocLon || '--' }},{{ scope.row.siteLocLat || '--' }}
         </template>
       </el-table-column>
       <!--      <el-table-column label="站点图片" align="center" prop="siteImageUri" width="100">
@@ -1016,12 +1016,7 @@ function resetConfigForm(config = null) {
 }
 
 const tableRowClassName = ({row, rowIndex}) => {
-  if (rowIndex === 1) {
-    return 'warning-row'
-  } else if (rowIndex === 3) {
-    return 'success-row'
-  }
-  return 'primary'
+  return row.rtk === 4 ? 'success-row' : 'warning-row';
 }
 
 getList();
