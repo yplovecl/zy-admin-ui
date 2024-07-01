@@ -11,45 +11,13 @@
         />
       </el-form-item>
       <el-form-item v-if="!(userStore.enterprise?.enterpriseId > 0)" label="所属企业" prop="enterpriseId">
-        <el-select v-model="queryParams.enterpriseId" placeholder="请选择企业" clearable>
+        <el-select v-model="queryParams.enterpriseId" placeholder="请选择企业" clearable style="width: 200px">
           <el-option v-for="item in enterpriseList" :key="item.enterpriseId" :label="item.name"
                      :value="item.enterpriseId"/>
         </el-select>
       </el-form-item>
-      <el-form-item label="站点号" v-if="false" prop="siteNo">
-        <el-input
-            v-model="queryParams.siteNo"
-            placeholder="请输入站点号"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="站点名" v-if="false" prop="siteName">
-        <el-input
-            v-model="queryParams.siteName"
-            placeholder="请输入站点名"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="布设人" v-if="false" prop="deployer">
-        <el-input
-            v-model="queryParams.deployer"
-            placeholder="请输入布设人"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="站点地址" v-if="false" prop="siteLoc">
-        <el-input
-            v-model="queryParams.siteLoc"
-            placeholder="请输入站点地址"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="工作模式" prop="workMode">
-        <el-select v-model="queryParams.workMode" placeholder="波形上传模式" clearable>
+        <el-select v-model="queryParams.workMode" placeholder="波形上传模式" clearable style="width: 150px">
           <el-option
               v-for="dict in device_work_mode"
               :key="dict.value"
@@ -59,7 +27,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="是否在线" prop="online">
-        <el-select v-model="queryParams.online" placeholder="设备是否在线" clearable>
+        <el-select v-model="queryParams.online" placeholder="设备是否在线" clearable style="width: 150px">
           <el-option
               v-for="dict in sys_yes_no"
               :key="dict.value"
@@ -69,7 +37,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="5G模块" prop="have5g">
-        <el-select v-model="queryParams.have5g" placeholder="是否带有5G" clearable>
+        <el-select v-model="queryParams.have5g" placeholder="是否带有5G" clearable style="width: 150px">
           <el-option
               v-for="dict in sys_yes_no"
               :key="dict.value"
@@ -1053,7 +1021,7 @@ const tableRowClassName = ({row, rowIndex}) => {
   } else if (rowIndex === 3) {
     return 'success-row'
   }
-  return ''
+  return 'primary'
 }
 
 getList();
