@@ -142,23 +142,26 @@
             :disabled="multiple"
             v-hasPermi="['seismograph:equipment:query']"
         >
-            <el-button type="success" plain :disabled="multiple">
-                发送指令<el-icon class="el-icon--right"><arrow-down /></el-icon>
-              </el-button>
-            <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item @click="sendCmdControlEvt(1)">开机</el-dropdown-item>
-                <el-dropdown-item @click="sendCmdControlEvt(2)">关机</el-dropdown-item>
-                <el-dropdown-item @click="sendCmdHex('3A0154')">打开波形</el-dropdown-item>
-                <el-dropdown-item @click="sendCmdHex('3A0155')">关闭波形</el-dropdown-item>
-              </el-dropdown-menu>
-            </template>
-          </el-dropdown>
+          <el-button type="success" plain :disabled="multiple">
+            发送指令
+            <el-icon class="el-icon--right">
+              <arrow-down/>
+            </el-icon>
+          </el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="sendCmdControlEvt(1)">开机</el-dropdown-item>
+              <el-dropdown-item @click="sendCmdControlEvt(2)">关机</el-dropdown-item>
+              <el-dropdown-item @click="sendCmdHex('3A0154')">打开波形</el-dropdown-item>
+              <el-dropdown-item @click="sendCmdHex('3A0155')">关闭波形</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="equipmentList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="equipmentList" @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
       <el-table-column type="selection" width="55" align="center"/>
       <!--      <el-table-column label="ID" align="center" prop="equipmentId" max-width="100"/>-->
       <el-table-column label="设备编号" align="center" prop="equipmentIdentity" width="180"/>
@@ -183,8 +186,7 @@
           {{ scope.row.packetTime }}分钟
         </template>
       </el-table-column>
-      <el-table-column label="第一次使用" align="center" prop="firstUseTime" width="150">
-      </el-table-column>
+      <!--      <el-table-column label="第一次使用" align="center" prop="firstUseTime" width="150"></el-table-column>-->
       <el-table-column label="工作模式" align="center" prop="workMode" width="100">
         <template #default="scope">
           <dict-tag :options="device_work_mode" :value="scope.row.workMode"/>
@@ -196,13 +198,13 @@
       <!--      <el-table-column label="布设人" align="center" prop="deployer"/>-->
       <!--      <el-table-column label="经度" align="center" prop="siteLocLon" min-width="120" :show-overflow-tooltip="true"/>-->
       <!--      <el-table-column label="纬度" align="center" prop="siteLocLat" min-width="120" :show-overflow-tooltip="true"/>-->
-      <el-table-column label="站点地址" align="center" prop="siteLoc" min-width="300" :show-overflow-tooltip="true">
+      <el-table-column label="设备地址" align="center" prop="siteLoc" min-width="300" :show-overflow-tooltip="true">
         <template #default="scope">
           <el-link v-if="scope.row.siteLocLon && scope.row.siteLocLat"
                    :href="`https://uri.amap.com/marker?position=${scope.row.siteLocLon},${scope.row.siteLocLat}`"
-                   target="_blank">{{ scope.row.siteLoc || '--' }}
+                   target="_blank">{{ scope.row.siteLocLon }},{{ scope.row.siteLocLat }}
           </el-link>
-          <span v-else>{{ scope.row.siteLoc || '--' }}</span>
+          <span v-else>{{ scope.row.siteLocLon || '--' }},{{ scope.row.siteLocLat || '--' }}</span>
         </template>
       </el-table-column>
       <!--      <el-table-column label="站点图片" align="center" prop="siteImageUri" width="100">
@@ -595,8 +597,10 @@ import {
   delEquipment,
   getEquipment,
   getWrConfig,
-  listEquipment, send5gCommandHex,
-  send5gConfigCmd, sendCmdControl,
+  listEquipment,
+  send5gCommandHex,
+  send5gConfigCmd,
+  sendCmdControl,
   updateEquipment
 } from "@/api/seismograph/equipment";
 import useUserStore from "@/store/modules/user";
@@ -1043,6 +1047,15 @@ function resetConfigForm(config = null) {
   proxy.resetForm("cellularConfigRef");
 }
 
+const tableRowClassName = ({row, rowIndex}) => {
+  if (rowIndex === 1) {
+    return 'warning-row'
+  } else if (rowIndex === 3) {
+    return 'success-row'
+  }
+  return ''
+}
+
 getList();
 </script>
 <style lang="scss">
@@ -1055,5 +1068,15 @@ getList();
   .dialog-footer {
     text-align: left;
   }
+}
+
+.el-table {
+  .warning-row {
+    --el-table-tr-bg-color: var(--el-color-warning);
+  }
+
+  //.success-row {
+  //  --el-table-tr-bg-color: var(--el-color-success);
+  //}
 }
 </style>

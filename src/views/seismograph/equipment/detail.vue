@@ -84,24 +84,10 @@
                   <div class="cell">{{ device.firstUseTime || '-' }}</div>
                 </td>
                 <td class="el-table__cell is-leaf">
-                  <div class="cell">站点名</div>
-                </td>
-                <td class="el-table__cell is-leaf">
-                  <div class="cell">{{ device.siteName || '-' }}</div>
-                </td>
-              </tr>
-              <tr>
-                <td class="el-table__cell is-leaf">
                   <div class="cell">累计使用时间</div>
                 </td>
                 <td class="el-table__cell is-leaf">
                   <div class="cell">{{ device.accumulativeUseTime || '-' }}</div>
-                </td>
-                <td class="el-table__cell is-leaf">
-                  <div class="cell">站点地址</div>
-                </td>
-                <td class="el-table__cell is-leaf">
-                  <div class="cell">{{ device.siteLoc || '-' }}</div>
                 </td>
               </tr>
               <tr>
@@ -246,22 +232,6 @@
               </tr>
               <tr>
                 <td class="el-table__cell is-leaf">
-                  <div class="cell">方位角</div>
-                </td>
-                <td class="el-table__cell is-leaf">
-                  <div class="cell">{{ payload.azimuth || '-' }}</div>
-                </td>
-              </tr>
-              <tr>
-                <td class="el-table__cell is-leaf">
-                  <div class="cell">温度</div>
-                </td>
-                <td class="el-table__cell is-leaf">
-                  <div class="cell">{{ payload.tem || '-' }}</div>
-                </td>
-              </tr>
-              <tr>
-                <td class="el-table__cell is-leaf">
                   <div class="cell">采样率</div>
                 </td>
                 <td class="el-table__cell is-leaf">
@@ -314,22 +284,6 @@
                 </td>
                 <td class="el-table__cell is-leaf">
                   <div class="cell">{{ payload.residual || '-' }}</div>
-                </td>
-              </tr>
-              <tr>
-                <td class="el-table__cell is-leaf">
-                  <div class="cell">俯仰角</div>
-                </td>
-                <td class="el-table__cell is-leaf">
-                  <div class="cell">{{ payload.pitchingAngle || '-' }}</div>
-                </td>
-              </tr>
-              <tr>
-                <td class="el-table__cell is-leaf">
-                  <div class="cell">翻滚角</div>
-                </td>
-                <td class="el-table__cell is-leaf">
-                  <div class="cell">{{ payload.rollingAngle || '-' }}</div>
                 </td>
               </tr>
               </tbody>
