@@ -25,7 +25,7 @@ defineProps({
   }
 })
 
-const title = ref('弹着点实时定位系统');
+const title = ref('Blazer数字地震仪');
 const settingsStore = useSettingsStore();
 const sideTheme = computed(() => settingsStore.sideTheme);
 </script>
