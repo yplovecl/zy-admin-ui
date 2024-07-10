@@ -129,7 +129,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="equipmentList" @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
+    <el-table v-loading="loading" :data="equipmentList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center"/>
       <!--      <el-table-column label="ID" align="center" prop="equipmentId" max-width="100"/>-->
       <el-table-column label="设备编号" align="center" prop="equipmentIdentity" width="180"/>
@@ -172,7 +172,9 @@
                              :href="`https://uri.amap.com/marker?position=${scope.row.siteLocLon},${scope.row.siteLocLat}`"
                              target="_blank">{{ scope.row.siteLocLon }},{{ scope.row.siteLocLat }}
                     </el-link>-->
-          {{ scope.row.siteLocLon || '--' }},{{ scope.row.siteLocLat || '--' }}
+          <el-text class="mx-1" :type="scope.row.remark === 'rtk=4' ? 'success' : 'danger'">
+            {{ scope.row.siteLocLon || '--' }},{{ scope.row.siteLocLat || '--' }}
+          </el-text>
         </template>
       </el-table-column>
       <!--      <el-table-column label="站点图片" align="center" prop="siteImageUri" width="100">
@@ -1013,10 +1015,6 @@ function resetConfigForm(config = null) {
   }, config || {});
   proxy.resetForm("wifiConfigRef");
   proxy.resetForm("cellularConfigRef");
-}
-
-const tableRowClassName = ({row}) => {
-  return row.remark === "rtk=4" ? 'success-row' : 'warning-row';
 }
 
 getList();
