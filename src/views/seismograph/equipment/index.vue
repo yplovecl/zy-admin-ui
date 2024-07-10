@@ -129,7 +129,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="equipmentList" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="equipmentList" @selection-change="handleSelectionChange" :cell-class-name="tableRowClassName">
       <el-table-column type="selection" width="55" align="center"/>
       <!--      <el-table-column label="ID" align="center" prop="equipmentId" max-width="100"/>-->
       <el-table-column label="设备编号" align="center" prop="equipmentIdentity" width="180"/>
@@ -166,15 +166,13 @@
       <!--      <el-table-column label="布设人" align="center" prop="deployer"/>-->
       <!--      <el-table-column label="经度" align="center" prop="siteLocLon" min-width="120" :show-overflow-tooltip="true"/>-->
       <!--      <el-table-column label="纬度" align="center" prop="siteLocLat" min-width="120" :show-overflow-tooltip="true"/>-->
-      <el-table-column label="设备地址" align="center" prop="siteLoc" min-width="300" :show-overflow-tooltip="true">
+      <el-table-column label="设备地址" align="center" prop="siteLoc" :show-overflow-tooltip="true" min-width="300">
         <template #default="scope">
           <!--          <el-link v-if="scope.row.siteLocLon && scope.row.siteLocLat"
                              :href="`https://uri.amap.com/marker?position=${scope.row.siteLocLon},${scope.row.siteLocLat}`"
                              target="_blank">{{ scope.row.siteLocLon }},{{ scope.row.siteLocLat }}
                     </el-link>-->
-          <el-text class="mx-1" :type="scope.row.remark === 'rtk=4' ? 'success' : 'danger'">
-            {{ scope.row.siteLocLon || '--' }},{{ scope.row.siteLocLat || '--' }}
-          </el-text>
+          {{ scope.row.siteLocLon || '--' }},{{ scope.row.siteLocLat || '--' }}
         </template>
       </el-table-column>
       <!--      <el-table-column label="站点图片" align="center" prop="siteImageUri" width="100">
@@ -187,7 +185,7 @@
                 <span>{{ scope.row.siteVideoUri }}</span>
               </template>
             </el-table-column>-->
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" min-width="200">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" min-width="300">
         <template #default="scope">
           <el-button link type="primary" icon="Setting" @click="handleConfig(scope.row)"
                      v-hasPermi="['seismograph:equipment:wrConfig']">配置
@@ -1017,6 +1015,13 @@ function resetConfigForm(config = null) {
   proxy.resetForm("cellularConfigRef");
 }
 
+const tableRowClassName = ({row, column, columnIndex}) => {
+  if (columnIndex !== 7) {
+    return;
+  }
+  return row.remark === "rtk=4" ? 'success-row' : 'warning-row';
+}
+
 getList();
 </script>
 <style lang="scss">
@@ -1033,11 +1038,11 @@ getList();
 
 .el-table {
   .warning-row {
-    --el-table-tr-bg-color: var(--el-color-danger-light-5);
+    background-color: var(--el-color-danger-light-5);
   }
 
   .success-row {
-    --el-table-tr-bg-color: var(--el-color-success-light-3);
+    background-color: var(--el-color-success-light-3);
   }
 }
 </style>
